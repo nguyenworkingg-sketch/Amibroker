@@ -34,7 +34,8 @@ https://nguyenworkingg-sketch.github.io/Amibroker/  (React + Vite + Tailwind + T
 | Rủi ro | Biện pháp |
 |---|---|
 | Hai thao tác AmiBroker cùng lúc | Khóa `archive/hub.lock` (PID); hoãn nếu đang chạy `dnse_live.py`, `vn_data.py`, `import_amibroker.js`, `CapNhat.bat`… (`--wait-minutes`) |
-| Nến trong phiên chưa chốt | So ngày nến cuối VNINDEX trong AmiBroker với file EOD; phiên = hôm nay mà chưa qua 15:30 → từ chối |
+| Nến trong phiên chưa chốt | So **ngày và giá đóng cửa** nến cuối VNINDEX trong AmiBroker với file EOD đã chốt (lệch > 0,05% → từ chối: nến DNSE trong phiên có cùng ngày nhưng khác giá); phiên = hôm nay mà chưa qua 15:30 → từ chối |
+| Chỉ số ngành chưa cập nhật | `NGANH_NGANHANG` phải có nến của phiên; nếu chưa → bỏ qua Rotation và bảng ngành (ghi lỗi rõ ràng) |
 | Gán nhầm ngày | Ngày phiên lấy từ dữ liệu EOD (không phải ngày lịch); dòng có ngày sau phiên → file bị loại |
 | Exploration treo | Timeout cứng ở tiến trình cha (mặc định 1.200 giây), không thử lại khi quá thời gian |
 | File lỗi/rỗng thay dữ liệu tốt | Thiếu cột → `invalid`; 0 mã khi phiên trước ≥ 5 mã → `empty_suspicious`, giữ nguyên dữ liệu cũ |

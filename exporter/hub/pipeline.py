@@ -140,6 +140,32 @@ def expected_session(cfg: Config, market) -> dt.date:
     return s
 
 
+def verify_probe(pr: dict, session: dt.date, market, bench: str, sec_sym: str | None, backfill: bool) -> tuple[str | None, bool]:
+    """Doi chieu nen cuoi trong AmiBroker voi so lieu EOD da chot. Tra ve (ghi chu, chi_so_nganh_ok).
+    Loi -> HubError (khong xuat gi). Kiem tra CA ngay LAN gia dong cua: nen trong phien (DNSE) co cung ngay
+    voi phien EOD nhung gia khac -> phai tu choi."""
+    s = session.isoformat()
+    b = (pr.get("bars") or {}).get(bench) or {"date": pr.get("last_bar")}
+    note = None
+    if backfill and (b.get("date") or "") > s:
+        # tai tao chi lay phien <= phien EOD; adapter tinh nhan qua nen nen sau do khong anh huong
+        note = f"AmiBroker co nen {b['date']} sau phien EOD {s}: chi tai tao den {s}"
+    elif b.get("date") != s:
+        why = "co nen trong phien chua chot" if (b.get("date") or "") > s else "chua nap du lieu moi"
+        raise HubError(f"AmiBroker co nen cuoi {b.get('date')} khac phien EOD {s} ({why}) -> khong xuat de tranh gan nham ngay")
+    else:
+        eod = float(market.bench_close.iloc[-1]) if market is not None and market.last_session() == session else None
+        c = b.get("close")
+        if eod is not None and c is not None and abs(c / eod - 1) > 0.0005:
+            raise HubError(f"{bench} phien {s} trong AmiBroker dong cua {c:.2f} khac so lieu chot {eod:.2f} -> AmiBroker con "
+                           "nen trong phien (chua chay CapNhat / nap EOD that bai). Khong xuat.")
+    sectors_ok = True
+    if sec_sym:
+        sb = (pr.get("bars") or {}).get(sec_sym)
+        sectors_ok = bool(sb) and (sb.get("date") or "") >= s
+    return note, sectors_ok
+
+
 def _formula(cfg: Config, name: str) -> str:
     p = Path(cfg.settings["amibroker"]["formulas_dir"]) / name
     if not p.exists():
@@ -176,21 +202,24 @@ def run_amibroker(cfg: Config, market, *, strategy_ids: list[str] | None = None,
             ab = cfg.settings["amibroker"]
             raw_dir = cfg.archive_dir / "raw" / session.isoformat()
             raw_dir.mkdir(parents=True, exist_ok=True)
-            pr = amibroker.probe(ab["database"], ab.get("benchmark_symbol", "VNINDEX"), raw_dir)
+            bench = ab.get("benchmark_symbol", "VNINDEX")
+            sec_sym = ab.get("sector_check_symbol")
+            pr = amibroker.probe(ab["database"], bench, raw_dir, check_symbols=[sec_sym] if sec_sym else [])
             rr.step("probe", "ok", message=f"database {pr['database']}, nen cuoi {pr['last_bar']}")
-            if backfill and (pr["last_bar"] or "") > session.isoformat():
-                # tai tao lich su chi lay cac phien <= phien EOD; adapter tinh nhan qua (khong nhin truoc) nen nen
-                # trong phien sau do khong anh huong. Chien luoc chi-phien-cuoi da bi loai khoi backfill.
-                rr.step("probe", "ok", message=f"AmiBroker co nen {pr['last_bar']} sau phien EOD {session}: chi tai tao den {session}")
-            elif pr["last_bar"] != session.isoformat():
-                raise HubError(f"AmiBroker co nen cuoi {pr['last_bar']} khac phien EOD {session} "
-                               f"({'co nen trong phien chua chot' if (pr['last_bar'] or '') > session.isoformat() else 'chua nap du lieu moi'})"
-                               " -> khong xuat de tranh gan nham ngay")
+            note, sectors_ok = verify_probe(pr, session, market, bench, sec_sym, bool(backfill))
+            if note:
+                rr.step("probe", "ok", message=note)
             strategies = [s for s in cfg.enabled() if not strategy_ids or s.id in strategy_ids]
             if backfill:
                 strategies = [s for s in strategies if s.supports_backfill]
             timeout = int(ab.get("timeout_seconds", 1200))
             ok = fail = 0
+            sector_dep = set(ab.get("sector_dependent", []))
+            for s in [x for x in strategies if x.id in sector_dep and not sectors_ok]:
+                rr.step(s.id, "error", strategy=s.id, session=session.isoformat(),
+                        message=f"Chi so nganh {sec_sym} trong AmiBroker chua cap nhat den phien {session} -> bo qua")
+                fail += 1
+            strategies = [x for x in strategies if sectors_ok or x.id not in sector_dep]
             for s in strategies:
                 stamp = now_vn().strftime("%H%M%S")
                 out = raw_dir / f"{s.id}_{kind}_{stamp}.csv"
@@ -215,7 +244,9 @@ def run_amibroker(cfg: Config, market, *, strategy_ids: list[str] | None = None,
                                 allow_empty=allow_empty or bool(backfill), backfill=backfill, seconds=round(time.time() - t0, 1))
                 ok += n > 0
                 fail += n == 0
-            if with_sectors and cfg.auxiliary:
+            if with_sectors and cfg.auxiliary and not sectors_ok:
+                rr.step("_SECTORS", "error", message=f"Chi so nganh {sec_sym} chua cap nhat den phien {session} -> bo qua")
+            elif with_sectors and cfg.auxiliary:
                 aux = cfg.auxiliary[0]
                 out = raw_dir / f"_SECTORS_{kind}_{now_vn().strftime('%H%M%S')}.csv"
                 try:
