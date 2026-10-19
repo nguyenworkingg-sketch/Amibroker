@@ -107,6 +107,9 @@ def _summ(values: list[float]) -> dict:
 def build_site(cfg: Config, market=None, *, build_time: str | None = None, demo: bool = False) -> dict:
     """Ghi toan bo data/latest, data/sessions, data/history, data/tickers, data/market, data/performance, data/meta.json."""
     dd = cfg.data_dir
+    if market is not None and not getattr(market, "enough_history", True):
+        raise ValueError(f"Lich su gia chi co {len(market.calendar)} phien (nguon: {getattr(market, 'source', '?')}) -> khong dung lai du lieu web "
+                         "de tranh xoa do rong thi truong / hieu suat sau tin hieu. Chay run_explorations.py de lay gia tu AmiBroker.")
     snaps, sectors = _load_all(cfg)
     gap_fn = (lambda a, b: market.session_gap(dt.date.fromisoformat(a), dt.date.fromisoformat(b))) if market else None
     st = compute_statuses(snaps, gap_fn)

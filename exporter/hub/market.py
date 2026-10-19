@@ -28,12 +28,71 @@ class MarketData:
         self.exchange = exchange
         self.names = names or {}
         self.sectors = sectors or {}
+        self.source = "frames"
         self._pos = {d: i for i, d in enumerate(self.calendar)}
         self._build()
 
     # ------------------------------------------------------------------ nap tu file
+    MIN_SESSIONS = 250  # it hon -> khong du tinh RS 63 phien, MA200, hieu suat 60 phien
+
+    @staticmethod
+    def cache_dir(cfg: Config) -> Path:
+        return cfg.archive_dir / "prices"
+
+    @classmethod
+    def latest_cache(cls, cfg: Config) -> Path | None:
+        files = sorted(cls.cache_dir(cfg).glob("prices_*.csv"))
+        return files[-1] if files else None
+
+    @classmethod
+    def load_best(cls, cfg: Config) -> "MarketData":
+        """Uu tien chuoi gia xuat tu AmiBroker (archive/prices, day du); neu khong co thi doc file EOD import."""
+        p = cls.latest_cache(cfg)
+        if p is not None:
+            return cls.from_prices_csv(cfg, p)
+        return cls.load(cfg)
+
+    @classmethod
+    def from_prices_csv(cls, cfg: Config, path: Path) -> "MarketData":
+        """CSV cua Hub_Prices.afl: Ticker,DateNum,Open,Close,Volume,Market (Market 0/1/2 = HOSE/HNX/UPCoM)."""
+        md = cfg.settings["market_data"]
+        bench = md.get("benchmark", "VNINDEX")
+        df = pd.read_csv(path, dtype={"Ticker": str})
+        df["Date"] = pd.to_datetime((df["DateNum"].astype(int) + 19_000_000).astype(str), format="%Y%m%d")
+        df = df.drop_duplicates(["Ticker", "Date"], keep="last")
+        b = df[df["Ticker"] == bench].set_index("Date").sort_index()
+        s = df[df["Ticker"] != bench]
+        exchange = {t: {0: "HOSE", 1: "HNX", 2: "UPCoM"}.get(int(m)) for t, m in zip(s["Ticker"], s["Market"])}
+        o = s.pivot(index="Date", columns="Ticker", values="Open")
+        c = s.pivot(index="Date", columns="Ticker", values="Close")
+        v = s.pivot(index="Date", columns="Ticker", values="Volume")
+        names, sectors = cls._names_sectors(cfg)
+        m = cls(o, c, v, b["Open"], b["Close"], exchange, names, sectors)
+        m.source = f"AmiBroker ({Path(path).name})"
+        return m
+
+    @staticmethod
+    def _names_sectors(cfg: Config) -> tuple[dict, dict]:
+        md = cfg.settings["market_data"]
+        root = Path(md["import_dir"])
+        names = {}
+        sp = root / md.get("symbols_file", "symbols.csv")
+        if sp.exists():
+            s = pd.read_csv(sp, dtype=str)
+            names = dict(zip(s["Ticker"], s["Name"].fillna("")))
+        sectors = {}
+        smap = md.get("sector_map")
+        if smap and Path(smap).exists():
+            s = pd.read_csv(smap, dtype=str)
+            col = "Nhom" if "Nhom" in s.columns else s.columns[1]
+            for t, g in zip(s["Ticker"], s[col]):
+                sectors.setdefault(t, cfg.sector_vi(g))
+        return names, sectors
+
     @classmethod
     def load(cls, cfg: Config, end: dt.date | None = None) -> "MarketData":
+        """Doc file EOD trong import\\ (CapNhat.bat chi giu ~20 phien gan nhat -> chi dung de xac dinh phien,
+        lich su day du lay tu AmiBroker qua from_prices_csv)."""
         md = cfg.settings["market_data"]
         root = Path(md["import_dir"])
         bench = md.get("benchmark", "VNINDEX")
@@ -61,19 +120,14 @@ class MarketData:
         o = allp.pivot(index="Date", columns="Ticker", values="Open")
         c = allp.pivot(index="Date", columns="Ticker", values="Close")
         v = allp.pivot(index="Date", columns="Ticker", values="Volume")
-        names = {}
-        sp = root / md.get("symbols_file", "symbols.csv")
-        if sp.exists():
-            s = pd.read_csv(sp, dtype=str)
-            names = dict(zip(s["Ticker"], s["Name"].fillna("")))
-        sectors = {}
-        smap = md.get("sector_map")
-        if smap and Path(smap).exists():
-            s = pd.read_csv(smap, dtype=str)
-            col = "Nhom" if "Nhom" in s.columns else s.columns[1]
-            for t, g in zip(s["Ticker"], s[col]):
-                sectors.setdefault(t, cfg.sector_vi(g))
-        return cls(o, c, v, idx["Open"], idx["Close"], exchange, names, sectors)
+        names, sectors = cls._names_sectors(cfg)
+        m = cls(o, c, v, idx["Open"], idx["Close"], exchange, names, sectors)
+        m.source = "import CSV"
+        return m
+
+    @property
+    def enough_history(self) -> bool:
+        return len(self.calendar) >= self.MIN_SESSIONS
 
     # ------------------------------------------------------------------ chi bao
     def _build(self) -> None:

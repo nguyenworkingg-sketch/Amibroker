@@ -111,6 +111,16 @@ class BuildTests(unittest.TestCase):
         bbb = read_json(cfg.data_dir / "tickers" / "BBB.json")
         self.assertIsNone(bbb["episodes"][0]["forward"]["5"])  # cua so chua du -> khong tinh
 
+    def test_refuses_short_price_history(self):
+        # Su co 19/10/2026: import\*.csv chi con ~20 phien -> khong duoc dung lai web voi lich su cut
+        cfg, _ = temp_config()
+        m, days = synthetic_market(30)
+        m.MIN_SESSIONS = 250
+        save_snapshot(cfg, snap(cfg, "VCP", days[-1], ["AAA"]))
+        with self.assertRaises(ValueError):
+            build_site(cfg, m, build_time="T")
+        self.assertFalse((cfg.data_dir / "meta.json").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

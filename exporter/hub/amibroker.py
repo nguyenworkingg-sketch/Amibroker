@@ -112,6 +112,25 @@ def _worker(job: dict) -> dict:
                 "version": str(getattr(ab, "Version", ""))}
     out = str(Path(job["out_csv"]).resolve())
     t0 = time.time()
+    if job.get("kind") == "prices":
+        # Hub_Prices.afl doc duong dan/khoang ngay tu file cfg do exporter ghi
+        afl = Path(job["afl"])
+        cfgf = afl.with_name("Hub_Prices_cfg.afl")
+        d0, d1 = (dt.date.fromisoformat(job[k]) for k in ("from", "to"))
+        dn = lambda d: (d.year - 1900) * 10000 + d.month * 100 + d.day  # noqa: E731
+        cfgf.write_text(f'HUB_OUT = "{out.replace(chr(92), chr(92) * 2)}";\nHUB_FROM = {dn(d0)};\nHUB_TO = {dn(d1)};\n', encoding="ascii")
+        if Path(out).exists():
+            Path(out).unlink()
+        aa = ab.Analysis
+        aa.ClearFilters()
+        aa.ApplyTo = 0
+        if not aa.LoadFormula(str(afl)):
+            raise AmiBrokerError(f"Khong nap duoc {afl}")
+        aa.RangeMode = 0
+        aa.Scan()
+        if not Path(out).exists() or Path(out).stat().st_size < 1000:
+            raise AmiBrokerError("Hub_Prices.afl khong tao duoc file gia")
+        return {"ok": True, "seconds": round(time.time() - t0, 1), "out": out, "mode": "prices"}
     if job.get("apx"):
         doc = ab.AnalysisDocs.Open(job["apx"])
         if doc is None:

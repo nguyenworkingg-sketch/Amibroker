@@ -166,6 +166,30 @@ def verify_probe(pr: dict, session: dt.date, market, bench: str, sec_sym: str | 
     return note, sectors_ok
 
 
+def export_prices(cfg: Config, session: dt.date, workdir: Path, rr: RunRecorder | None = None):
+    """Xuat chuoi gia day du tu AmiBroker (Hub_Prices.afl) -> archive/prices/prices_<phien>.csv -> MarketData.
+    Lich su phai du dai va ket thuc dung phien, neu khong -> HubError (khong dung lich su cut cut)."""
+    from .market import MarketData
+    d = MarketData.cache_dir(cfg)
+    d.mkdir(parents=True, exist_ok=True)
+    final = d / f"prices_{session.isoformat()}.csv"
+    tmp = d / f"tmp_{session.isoformat()}_{os.getpid()}.csv"
+    t0 = time.time()
+    amibroker.run_job({"kind": "prices", "database": cfg.settings["amibroker"]["database"], "out_csv": str(tmp),
+                       "afl": _formula(cfg, "Hub_Prices.afl"), "from": (session - dt.timedelta(days=900)).isoformat(),
+                       "to": session.isoformat()}, int(cfg.settings["amibroker"].get("timeout_seconds", 1200)))
+    m = MarketData.from_prices_csv(cfg, tmp)
+    if m.last_session() != session or not m.enough_history:
+        raise HubError(f"Chuoi gia tu AmiBroker khong hop le: {len(m.calendar)} phien, phien cuoi {m.last_session()} (can {session}, >= {m.MIN_SESSIONS} phien)")
+    os.replace(tmp, final)
+    for old in sorted(d.glob("prices_*.csv"))[:-3]:
+        old.unlink()
+    m.source = f"AmiBroker ({final.name})"
+    if rr:
+        rr.step("prices", "ok", message=f"{len(m.calendar)} phien x {m.close.shape[1]} ma tu AmiBroker ({round(time.time() - t0, 1)}s)")
+    return m
+
+
 def _formula(cfg: Config, name: str) -> str:
     p = Path(cfg.settings["amibroker"]["formulas_dir"]) / name
     if not p.exists():
@@ -209,6 +233,7 @@ def run_amibroker(cfg: Config, market, *, strategy_ids: list[str] | None = None,
             note, sectors_ok = verify_probe(pr, session, market, bench, sec_sym, bool(backfill))
             if note:
                 rr.step("probe", "ok", message=note)
+            market = export_prices(cfg, session, raw_dir, rr)
             strategies = [s for s in cfg.enabled() if not strategy_ids or s.id in strategy_ids]
             if backfill:
                 strategies = [s for s in strategies if s.supports_backfill]
