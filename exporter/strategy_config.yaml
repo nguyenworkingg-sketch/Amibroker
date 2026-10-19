@@ -13,6 +13,9 @@ settings:
     # Thu muc chua cac file Hub_*.afl tren may AmiBroker (cai bang: python exporter\install_afl.py)
     formulas_dir: C:\Program Files (x86)\AmiBroker\Formulas\Hub
     benchmark_symbol: VNINDEX
+    # Chi so nganh tu tinh (nganh.py) phai cung phien EOD; neu chua cap nhat -> bo qua cac muc phu thuoc
+    sector_check_symbol: NGANH_NGANHANG
+    sector_dependent: [ROTATION]
     timeout_seconds: 1200
     retries: 1
   market_data:

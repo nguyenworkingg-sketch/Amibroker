@@ -66,6 +66,24 @@ class PipelineTests(unittest.TestCase):
         with mock.patch.object(pipeline, "now_vn", return_value=late):
             self.assertEqual(pipeline.expected_session(self.cfg, m), days[-1])
 
+    def test_probe_rejects_intraday_bar_with_same_date(self):
+        # Truong hop that 19/10/2026: AmiBroker co nen DNSE trong phien CUNG NGAY voi EOD nhung gia khac
+        m, days = synthetic_market(30)
+        s = days[-1]
+        eod = float(m.bench_close.iloc[-1])
+        bars = lambda c, sec=s: {"bars": {"VNINDEX": {"date": s.isoformat(), "close": c},  # noqa: E731
+                                          "NGANH_X": {"date": sec.isoformat(), "close": 1.0}}}
+        with self.assertRaises(pipeline.HubError):
+            pipeline.verify_probe(bars(eod * 1.006), s, m, "VNINDEX", "NGANH_X", False)
+        self.assertEqual(pipeline.verify_probe(bars(eod), s, m, "VNINDEX", "NGANH_X", False), (None, True))
+        # chi so nganh chua cap nhat -> bao de bo qua Rotation / bang nganh
+        self.assertEqual(pipeline.verify_probe(bars(eod, days[-2]), s, m, "VNINDEX", "NGANH_X", False)[1], False)
+        # ngay khac -> loi; tai tao lich su cho phep nen sau phien EOD
+        late = {"bars": {"VNINDEX": {"date": "2099-01-01", "close": 1}}}
+        with self.assertRaises(pipeline.HubError):
+            pipeline.verify_probe(late, s, m, "VNINDEX", None, False)
+        self.assertIsNotNone(pipeline.verify_probe(late, s, m, "VNINDEX", None, True)[0])
+
     def test_invalid_file_keeps_previous_data(self):
         m, days = synthetic_market(30)
         s = self.cfg.strategy("VCP")

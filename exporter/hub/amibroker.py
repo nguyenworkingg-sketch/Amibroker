@@ -49,9 +49,9 @@ def run_job(job: dict, timeout: int) -> dict:
     return res
 
 
-def probe(database: str, benchmark: str, workdir: Path, timeout: int = 120) -> dict:
-    """Kiem tra AmiBroker: database dang mo + ngay nen cuoi cua benchmark."""
-    return run_job({"kind": "probe", "database": database, "benchmark": benchmark,
+def probe(database: str, benchmark: str, workdir: Path, timeout: int = 120, check_symbols: list[str] | None = None) -> dict:
+    """Kiem tra AmiBroker: database dang mo + nen cuoi (ngay, gia, KL) cua benchmark va cac ma kiem tra."""
+    return run_job({"kind": "probe", "database": database, "benchmark": benchmark, "check_symbols": check_symbols or [],
                     "out_csv": str(Path(workdir) / "probe.csv"), "afl": None}, timeout)
 
 
@@ -80,14 +80,18 @@ def _com_date(d: dt.date, end: bool = False):
     return pywintypes.Time(t.replace(tzinfo=dt.timezone.utc))
 
 
-def _last_bar(ab, symbol: str) -> str | None:
+def _last_bar(ab, symbol: str) -> dict | None:
+    """Nen cuoi cua 1 ma trong database: ngay + gia dong cua + khoi luong (de doi chieu voi file EOD)."""
     st = ab.Stocks(symbol)
+    if st is None:
+        return None
     q = st.Quotations
     n = q.Count
     if n <= 0:
         return None
-    d = q(n - 1).Date
-    return dt.date(d.year, d.month, d.day).isoformat()
+    x = q(n - 1)
+    d = x.Date
+    return {"date": dt.date(d.year, d.month, d.day).isoformat(), "close": float(x.Close), "volume": float(x.Volume)}
 
 
 def _set_watchlist_filter(aa, n: int) -> None:
@@ -102,7 +106,9 @@ def _worker(job: dict) -> dict:
     pythoncom.CoInitialize()
     ab = _app(job.get("database"))
     if job.get("kind") == "probe":
-        return {"ok": True, "database": str(ab.DatabasePath), "last_bar": _last_bar(ab, job["benchmark"]),
+        bars = {s: _last_bar(ab, s) for s in [job["benchmark"], *job.get("check_symbols", [])]}
+        b = bars.get(job["benchmark"]) or {}
+        return {"ok": True, "database": str(ab.DatabasePath), "last_bar": b.get("date"), "bars": bars,
                 "version": str(getattr(ab, "Version", ""))}
     out = str(Path(job["out_csv"]).resolve())
     t0 = time.time()
