@@ -1,13 +1,113 @@
 {
   "runs": [
     {
+      "run_id": "2d38d0ea92c8",
+      "kind": "daily",
+      "started_at": "2026-10-19T16:06:22+07:00",
+      "finished_at": "2026-10-19T16:14:07+07:00",
+      "session": "2026-10-19",
+      "result": "success",
+      "message": "6 chien luoc ok, 0 loi",
+      "steps": [
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "database D:\\AmiBroker_VN\\Data, nen cuoi 2026-10-19"
+        },
+        {
+          "name": "VCP",
+          "status": "created",
+          "strategy": "VCP",
+          "session": "2026-10-19",
+          "records": 6,
+          "seconds": 83.5,
+          "message": "created: 1"
+        },
+        {
+          "name": "WYCKOFF",
+          "status": "created",
+          "strategy": "WYCKOFF",
+          "session": "2026-10-19",
+          "records": 92,
+          "seconds": 56.3,
+          "message": "created: 1"
+        },
+        {
+          "name": "PULLBACK",
+          "status": "created",
+          "strategy": "PULLBACK",
+          "session": "2026-10-19",
+          "records": 14,
+          "seconds": 99.0,
+          "message": "created: 1"
+        },
+        {
+          "name": "RS",
+          "status": "created",
+          "strategy": "RS",
+          "session": "2026-10-19",
+          "records": 22,
+          "seconds": 76.0,
+          "message": "created: 1"
+        },
+        {
+          "name": "ROTATION",
+          "status": "created",
+          "strategy": "ROTATION",
+          "session": "2026-10-19",
+          "records": 49,
+          "seconds": 9.9,
+          "message": "created: 1"
+        },
+        {
+          "name": "HIGH_BETA",
+          "status": "created",
+          "strategy": "HIGH_BETA",
+          "session": "2026-10-19",
+          "records": 6,
+          "seconds": 110.2,
+          "message": "created: 1"
+        },
+        {
+          "name": "_SECTORS",
+          "status": "ok",
+          "message": "1 phien nganh"
+        },
+        {
+          "name": "build",
+          "status": "ok",
+          "message": "251 phien, 140 file thay doi"
+        }
+      ],
+      "published": false,
+      "published_at": null
+    },
+    {
+      "run_id": "d678a756da75",
+      "kind": "daily",
+      "started_at": "2026-10-19T15:58:11+07:00",
+      "finished_at": "2026-10-19T15:58:13+07:00",
+      "session": "2026-10-19",
+      "result": "failed",
+      "message": "VNINDEX phien 2026-10-19 trong AmiBroker dong cua 1699.84 khac so lieu chot 1689.84 -> AmiBroker con nen trong phien (chua chay CapNhat / nap EOD that bai). Khong xuat.",
+      "steps": [
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "database D:\\AmiBroker_VN\\Data, nen cuoi 2026-10-19"
+        }
+      ],
+      "published": false,
+      "published_at": null
+    },
+    {
       "run_id": "8b1b30e0665c",
       "kind": "daily",
       "started_at": "2026-10-19T15:48:16+07:00",
       "finished_at": "2026-10-19T15:55:46+07:00",
       "session": "2026-10-19",
-      "result": "success",
-      "message": "6 chien luoc ok, 0 loi",
+      "result": "failed",
+      "message": "VO HIEU: tinh tren nen trong phien DNSE chua chot (AmiBroker chua nap EOD). Da go khoi web, chay lai sau khi nap EOD.",
       "steps": [
         {
           "name": "probe",
@@ -188,76 +288,76 @@
   "strategies": {
     "VCP": {
       "last_status": "created",
-      "last_run_at": "2026-10-19T15:55:46+07:00",
+      "last_run_at": "2026-10-19T16:14:07+07:00",
       "last_message": "created: 1",
       "last_success_session": "2026-10-19",
-      "last_success_at": "2026-10-19T15:55:46+07:00",
-      "last_records": 5,
+      "last_success_at": "2026-10-19T16:14:07+07:00",
+      "last_records": 6,
       "last_error": null
     },
     "WYCKOFF": {
       "last_status": "created",
-      "last_run_at": "2026-10-19T15:55:46+07:00",
+      "last_run_at": "2026-10-19T16:14:07+07:00",
       "last_message": "created: 1",
       "last_success_session": "2026-10-19",
-      "last_success_at": "2026-10-19T15:55:46+07:00",
-      "last_records": 86,
+      "last_success_at": "2026-10-19T16:14:07+07:00",
+      "last_records": 92,
       "last_error": null
     },
     "PULLBACK": {
       "last_status": "created",
-      "last_run_at": "2026-10-19T15:55:46+07:00",
+      "last_run_at": "2026-10-19T16:14:07+07:00",
       "last_message": "created: 1",
       "last_success_session": "2026-10-19",
-      "last_success_at": "2026-10-19T15:55:46+07:00",
-      "last_records": 11,
+      "last_success_at": "2026-10-19T16:14:07+07:00",
+      "last_records": 14,
       "last_error": null
     },
     "ROTATION": {
       "last_status": "created",
-      "last_run_at": "2026-10-19T15:55:46+07:00",
+      "last_run_at": "2026-10-19T16:14:07+07:00",
       "last_message": "created: 1",
       "last_success_session": "2026-10-19",
-      "last_success_at": "2026-10-19T15:55:46+07:00",
-      "last_records": 34,
+      "last_success_at": "2026-10-19T16:14:07+07:00",
+      "last_records": 49,
       "last_error": null
     },
     "RS": {
       "last_status": "created",
-      "last_run_at": "2026-10-19T15:55:46+07:00",
+      "last_run_at": "2026-10-19T16:14:07+07:00",
       "last_message": "created: 1",
       "last_success_session": "2026-10-19",
-      "last_success_at": "2026-10-19T15:55:46+07:00",
-      "last_records": 20,
+      "last_success_at": "2026-10-19T16:14:07+07:00",
+      "last_records": 22,
       "last_error": null
     },
     "HIGH_BETA": {
       "last_status": "created",
-      "last_run_at": "2026-10-19T15:55:46+07:00",
+      "last_run_at": "2026-10-19T16:14:07+07:00",
       "last_message": "created: 1",
       "last_success_session": "2026-10-19",
-      "last_success_at": "2026-10-19T15:55:46+07:00",
-      "last_records": 1,
+      "last_success_at": "2026-10-19T16:14:07+07:00",
+      "last_records": 6,
       "last_error": null
     }
   },
   "last_success": {
-    "run_id": "8b1b30e0665c",
-    "at": "2026-10-19T15:55:46+07:00",
+    "run_id": "2d38d0ea92c8",
+    "at": "2026-10-19T16:14:07+07:00",
     "session": "2026-10-19",
     "kind": "daily"
   },
   "last_run": {
-    "run_id": "8b1b30e0665c",
+    "run_id": "2d38d0ea92c8",
     "kind": "daily",
-    "started_at": "2026-10-19T15:48:16+07:00",
-    "finished_at": "2026-10-19T15:55:46+07:00",
+    "started_at": "2026-10-19T16:06:22+07:00",
+    "finished_at": "2026-10-19T16:14:07+07:00",
     "session": "2026-10-19",
     "result": "success",
     "message": "6 chien luoc ok, 0 loi"
   },
   "last_publication": {
-    "at": "2026-10-19T15:55:46+07:00",
+    "at": "2026-10-19T16:14:07+07:00",
     "session": "2026-10-19"
   }
 }
