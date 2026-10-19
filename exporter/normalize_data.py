@@ -1,4 +1,4 @@
-"""Dung lai TOAN BO du lieu web (data/sessions, history, tickers, market, performance, meta) tu cac snapshot.
+﻿"""Dung lai TOAN BO du lieu web (data/sessions, history, tickers, market, performance, meta) tu cac snapshot.
 
     python exporter\\normalize_data.py              # co du lieu gia EOD (hieu suat sau tin hieu, do rong thi truong)
     python exporter\\normalize_data.py --no-market  # chi tu snapshot
@@ -33,7 +33,7 @@ def main() -> int:
     market = None
     if not a.no_market:
         from hub.market import MarketData
-        market = MarketData.load(cfg)
+        market = MarketData.load_best(cfg)
     meta = read_json(cfg.data_dir / "meta.json", {})
     demo = a.demo or bool(meta.get("demo"))
     info = build_site(cfg, market, build_time=iso(now_vn()), demo=demo)

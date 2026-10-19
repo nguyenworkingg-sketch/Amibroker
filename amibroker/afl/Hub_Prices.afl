@@ -1,0 +1,35 @@
+// =====================================================================
+// Hub_Prices.afl - XUAT CHUOI GIA EOD tu database AmiBroker cho exporter (khong hien ket qua).
+// Chay bang SCAN, Apply to: All symbols. Moi ma HOSE/HNX/UPCoM + VNINDEX ghi cac phien tu HUB_FROM
+// den HUB_TO vao file HUB_OUT (CSV: Ticker,DateNum,Open,Close,Volume,Market).
+// HUB_OUT / HUB_FROM / HUB_TO do exporter ghi vao Hub_Prices_cfg.afl truoc moi lan chay.
+// Ly do: CapNhat.bat chi ghi ~20 phien gan nhat vao import\*.csv, lich su day du chi co trong AmiBroker.
+// =====================================================================
+#pragma maxthreads 1
+#include "C:\Program Files (x86)\AmiBroker\Formulas\Hub\Hub_Prices_cfg.afl"
+Buy = Sell = Short = Cover = 0;
+mk = MarketID();
+sym = Name();
+if (Status("action") == actionScan)
+{
+    if (Status("stocknum") == 0)
+    {
+        fh = fopen(HUB_OUT, "w");
+        if (fh) { fputs("Ticker,DateNum,Open,Close,Volume,Market\n", fh); fclose(fh); }
+    }
+    if (mk <= 2 OR sym == "VNINDEX")
+    {
+        dn = DateNum();
+        fh = fopen(HUB_OUT, "a");
+        if (fh)
+        {
+            for (i = 0; i < BarCount; i++)
+            {
+                if (dn[i] >= HUB_FROM AND dn[i] <= HUB_TO)
+                    fputs(sym + "," + NumToStr(dn[i], 1.0, False) + "," + NumToStr(O[i], 1.4, False) + ","
+                          + NumToStr(C[i], 1.4, False) + "," + NumToStr(V[i], 1.0, False) + "," + NumToStr(mk, 1.0, False) + "\n", fh);
+            }
+            fclose(fh);
+        }
+    }
+}

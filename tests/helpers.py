@@ -40,7 +40,9 @@ def synthetic_market(n: int = 120, tickers=("AAA", "BBB", "CCC"), start=dt.date(
             p = prev * (1 + g)
             recs.append({"ticker": t, "date": d.isoformat(), "open": prev, "close": p, "volume": 1_000_000, "exchange": "HOSE"})
             prev = p
-    return frames_from_records(recs), days
+    m = frames_from_records(recs)
+    m.MIN_SESSIONS = 0  # du lieu tong hop ngan, khong ap dung nguong lich su toi thieu
+    return m, days
 
 
 def write(path: Path, text: str, encoding: str = "utf-8") -> Path:

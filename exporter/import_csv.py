@@ -1,4 +1,4 @@
-"""NHAP TAY ket qua Exploration tu file CSV (khi chua cai dat ket noi COM).
+﻿"""NHAP TAY ket qua Exploration tu file CSV (khi chua cai dat ket noi COM).
 
 Trong AmiBroker: chay Exploration -> chuot phai bang ket qua -> Export -> luu CSV, roi:
 
@@ -49,7 +49,7 @@ def main() -> int:
     if not a.no_market:
         from hub.market import MarketData
         try:
-            market = MarketData.load(cfg)
+            market = MarketData.load_best(cfg)
         except (OSError, KeyError, ValueError) as e:
             log.warning("Khong nap duoc du lieu gia (%s) -> nhap khong lam giau", e)
     if a.session:
