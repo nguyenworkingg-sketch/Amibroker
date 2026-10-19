@@ -1,0 +1,33 @@
+// =====================================================================
+// Hub_VCP.afl - ADAPTER cho AmiBroker Exploration Hub (KHONG doi logic sang loc)
+// Logic: Formulas\Include\VCP_Core.afl (VcCompute) - giong het PTKT\VCP_Explorer.afl.
+// Quy tac "dat" cua Hub: VC_state 1..3 (Forming / Pre-Breakout / Breakout) = che do "All VCP"
+//   cua VCP_Explorer nhung bo trang thai Failed(4)/Extended(5); co bo loc thanh khoan VC_liqOk;
+//   san HOSE/HNX/UPCoM (loc san lam tren web).
+// Moi dong = trang thai TAI ngay do (core khong nhin truoc) -> chay Range From-To de tai tao lich su.
+// Cot chuan cua Hub: Ticker, DateNum, StateCode, State, Score + cot rieng cua chien luoc.
+// =====================================================================
+#include_once <VCP_Core.afl>
+VcCompute();
+st = VC_state;
+mk = MarketID();
+Filter = st >= 1 AND st <= 3 AND VC_liqOk AND mk <= 2;
+
+SetOption("NoDefaultColumns", True);
+AddTextColumn(Name(), "Ticker", 1.0);
+AddColumn(DateNum(), "DateNum", 1.0);
+AddColumn(st, "StateCode", 1.0);
+AddMultiTextColumn(st, "NO VCP\nFORMING\nPRE-BREAKOUT\nBREAKOUT\nFAILED\nEXTENDED", "State");
+AddColumn(VC_score, "Score", 1.1);
+AddColumn(VC_strictOk + 0, "Strict", 1.0);
+AddColumn(VC_baseDays, "BaseDays", 1.0);
+AddColumn(VC_nT, "TCount", 1.0);
+AddColumn(VC_final * 100, "FinalTightPct", 1.2);
+AddColumn(VC_vdu, "VDU", 1.2);
+AddColumn(VC_pivot, "Pivot", 1.2);
+AddColumn(VC_dist * 100, "DistPivotPct", 1.2);
+AddColumn(VC_rvol, "RVol", 1.2);
+AddColumn(VC_rs63 * 100, "RS63Pct", 1.2);
+AddColumn(VC_stop, "Stop", 1.2);
+AddColumn(VC_risk * 100, "RiskPct", 1.2);
+AddColumn(VC_val20, "Val20", 1.2);

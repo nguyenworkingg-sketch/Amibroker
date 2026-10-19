@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Bang mau trung tinh, xanh/do tiet che cho tang/giam. Mac dinh toi (class "dark" tren <html>). */
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --panel-2: #f0f2f5;
+  --border: #dde1e7;
+  --text: #17202b;
+  --muted: #5c6878;
+  --accent: #0b7a5c;
+  --accent-soft: #e2f3ed;
+  --pos: #0f8a4f;
+  --neg: #c2362f;
+  --warn: #a96a00;
+  --warn-soft: #fff4dc;
+  --info: #2d62b8;
+  --chart-grid: #e5e8ec;
+}
+.dark {
+  --bg: #0d1117;
+  --panel: #141a22;
+  --panel-2: #1b222c;
+  --border: #283240;
+  --text: #e3e8ef;
+  --muted: #8b97a8;
+  --accent: #34c38f;
+  --accent-soft: #143528;
+  --pos: #3ccf8e;
+  --neg: #f0625a;
+  --warn: #f2b84b;
+  --warn-soft: #3a2c10;
+  --info: #6aa2ff;
+  --chart-grid: #232c38;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-line: var(--border);
+  --color-fg: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-pos: var(--pos);
+  --color-neg: var(--neg);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-info: var(--info);
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 12.5px; }
+a { color: inherit; }
+::selection { background: var(--accent-soft); }
+
+/* bang du lieu: header dinh, dong mat do cao */
+.dt { border-collapse: separate; border-spacing: 0; width: 100%; }
+.dt th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--panel-2); color: var(--muted);
+  font-weight: 600; font-size: 11.5px; text-transform: none; letter-spacing: .01em;
+  text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+.dt td { padding: 5px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; vertical-align: middle; }
+.dt tbody tr:hover td { background: var(--panel-2); }
+.dt th.r, .dt td.r { text-align: right; }
+
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; min-width: 0; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 7px;
+  border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 13px; cursor: pointer;
+}
+.btn:hover { background: var(--panel-2); }
+.btn[aria-pressed="true"], .btn.on { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+.inp {
+  padding: 5px 9px; border-radius: 7px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 13px;
+}
+.inp:focus, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tag { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 999px; font-size: 11.5px; font-weight: 500; border: 1px solid var(--border); white-space: nowrap; }

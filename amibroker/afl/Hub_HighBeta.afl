@@ -1,0 +1,9 @@
+// =====================================================================
+// Hub_HighBeta.afl - HIGH BETA cho AmiBroker Exploration Hub
+// Chay NGUYEN BAN file goc PTKT\HighBeta_Exploration.afl (khong sua 1 dong nao). File nay chi
+//   nam o duong dan rieng de Analysis dung THAM SO MAC DINH trong code (hien tat ca ma du
+//   thanh khoan, sap theo Composite), khong phu thuoc tham so dang chinh tay.
+// Can 2 luot: SCAN roi EXPLORE, Apply to: All symbols (exporter tu lam). Chi tinh PHIEN CUOI.
+// Quy tac "dat" (ap dung trong exporter): Composite Score >= 70 = che do "Chi Elite + Strong (>= 70)".
+// =====================================================================
+#include "C:\Program Files (x86)\AmiBroker\Formulas\PTKT\HighBeta_Exploration.afl"

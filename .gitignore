@@ -1,0 +1,18 @@
+# Kho luu tru cuc bo (file xuat goc tu AmiBroker, log, khoa) - KHONG dang len repo cong khai
+archive/
+*.log
+hub.lock
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# Bi mat / cau hinh may
+.env
+*.local.yaml

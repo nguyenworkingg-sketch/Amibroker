@@ -1,0 +1,159 @@
+{
+  "runs": [
+    {
+      "run_id": "03cf6cd50564",
+      "kind": "backfill",
+      "started_at": "2026-10-19T15:25:34+07:00",
+      "finished_at": "2026-10-19T15:26:24+07:00",
+      "session": "2026-10-16",
+      "result": "success",
+      "message": "0 chien luoc ok, 0 loi",
+      "steps": [
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "database D:\\AmiBroker_VN\\Data, nen cuoi 2026-10-19"
+        },
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "AmiBroker co nen 2026-10-19 sau phien EOD 2026-10-16: chi tai tao den 2026-10-16"
+        },
+        {
+          "name": "_SECTORS",
+          "status": "ok",
+          "message": "250 phien nganh"
+        },
+        {
+          "name": "build",
+          "status": "ok",
+          "message": "250 phien, 2 file thay doi"
+        }
+      ],
+      "published": false,
+      "published_at": null
+    },
+    {
+      "run_id": "edab6593f197",
+      "kind": "backfill",
+      "started_at": "2026-10-19T15:16:54+07:00",
+      "finished_at": "2026-10-19T15:22:09+07:00",
+      "session": "2026-10-16",
+      "result": "success",
+      "message": "4 chien luoc ok, 0 loi",
+      "steps": [
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "database D:\\AmiBroker_VN\\Data, nen cuoi 2026-10-19"
+        },
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "AmiBroker co nen 2026-10-19 sau phien EOD 2026-10-16: chi tai tao den 2026-10-16"
+        },
+        {
+          "name": "VCP",
+          "status": "created",
+          "strategy": "VCP",
+          "session": "2025-10-15..2026-10-16",
+          "records": 1628,
+          "seconds": 84.6,
+          "message": "created: 250"
+        },
+        {
+          "name": "WYCKOFF",
+          "status": "created",
+          "strategy": "WYCKOFF",
+          "session": "2025-10-15..2026-10-16",
+          "records": 26648,
+          "seconds": 57.9,
+          "message": "created: 250"
+        },
+        {
+          "name": "PULLBACK",
+          "status": "created",
+          "strategy": "PULLBACK",
+          "session": "2025-10-15..2026-10-16",
+          "records": 3182,
+          "seconds": 97.4,
+          "message": "created: 250"
+        },
+        {
+          "name": "ROTATION",
+          "status": "created",
+          "strategy": "ROTATION",
+          "session": "2025-10-15..2026-10-16",
+          "records": 6167,
+          "seconds": 8.3,
+          "message": "created: 250"
+        },
+        {
+          "name": "_SECTORS",
+          "status": "ok",
+          "message": "250 phien nganh"
+        },
+        {
+          "name": "build",
+          "status": "ok",
+          "message": "250 phien, 496 file thay doi"
+        }
+      ],
+      "published": false,
+      "published_at": null
+    }
+  ],
+  "strategies": {
+    "VCP": {
+      "last_status": "created",
+      "last_run_at": "2026-10-19T15:22:09+07:00",
+      "last_message": "created: 250",
+      "last_success_session": "2025-10-15..2026-10-16",
+      "last_success_at": "2026-10-19T15:22:09+07:00",
+      "last_records": 1628,
+      "last_error": null
+    },
+    "WYCKOFF": {
+      "last_status": "created",
+      "last_run_at": "2026-10-19T15:22:09+07:00",
+      "last_message": "created: 250",
+      "last_success_session": "2025-10-15..2026-10-16",
+      "last_success_at": "2026-10-19T15:22:09+07:00",
+      "last_records": 26648,
+      "last_error": null
+    },
+    "PULLBACK": {
+      "last_status": "created",
+      "last_run_at": "2026-10-19T15:22:09+07:00",
+      "last_message": "created: 250",
+      "last_success_session": "2025-10-15..2026-10-16",
+      "last_success_at": "2026-10-19T15:22:09+07:00",
+      "last_records": 3182,
+      "last_error": null
+    },
+    "ROTATION": {
+      "last_status": "created",
+      "last_run_at": "2026-10-19T15:22:09+07:00",
+      "last_message": "created: 250",
+      "last_success_session": "2025-10-15..2026-10-16",
+      "last_success_at": "2026-10-19T15:22:09+07:00",
+      "last_records": 6167,
+      "last_error": null
+    }
+  },
+  "last_success": {
+    "run_id": "03cf6cd50564",
+    "at": "2026-10-19T15:26:24+07:00",
+    "session": "2026-10-16",
+    "kind": "backfill"
+  },
+  "last_run": {
+    "run_id": "03cf6cd50564",
+    "kind": "backfill",
+    "started_at": "2026-10-19T15:25:34+07:00",
+    "finished_at": "2026-10-19T15:26:24+07:00",
+    "session": "2026-10-16",
+    "result": "success",
+    "message": "0 chien luoc ok, 0 loi"
+  }
+}

@@ -1,0 +1,219 @@
+# =====================================================================
+# AmiBroker Exploration Hub - cau hinh he thong + DANH MUC CHIEN LUOC (strategy registry)
+# Them chien luoc moi: them 1 muc trong `strategies` (khong can sua frontend).
+# Duong dan may Windows co the ghi de bang bien moi truong (xem .env.example).
+# =====================================================================
+settings:
+  timezone: Asia/Ho_Chi_Minh
+  # Phien chi duoc coi la "da hoan tat" sau gio nay (neu ngay du lieu = hom nay)
+  session_close_time: "15:30"
+  schedule_time: "08:30"
+  amibroker:
+    database: D:\AmiBroker_VN\Data
+    # Thu muc chua cac file Hub_*.afl tren may AmiBroker (cai bang: python exporter\install_afl.py)
+    formulas_dir: C:\Program Files (x86)\AmiBroker\Formulas\Hub
+    benchmark_symbol: VNINDEX
+    timeout_seconds: 1200
+    retries: 1
+  market_data:
+    # File EOD ma AmiBroker nap (KHONG dung file LIVE_* trong phien)
+    import_dir: D:\AmiBroker_VN\import
+    stock_files: [HOSE.csv, HNX.csv, UPCOM.csv]
+    index_file: INDEX.csv
+    symbols_file: symbols.csv
+    sector_map: D:\AmiBroker_VN\scripts\nganh_members.csv
+    benchmark: VNINDEX
+    lookback_sessions: 600
+  # Tien trinh xung dot: dang chay thi exporter KHONG chay (tranh 2 thao tac AmiBroker cung luc)
+  conflicting_processes: [dnse_live.py, vn_data.py, import_amibroker.js, CapNhat.bat, TaiLaiToanBo.bat]
+  liquidity_default_bil: 2.0
+  # Chi phi giao dich khu hoi dung cho "sau phi" (phi mua 0.15% + phi/thue ban 0.25% + truot gia 0.1% x 2)
+  round_trip_cost_pct: 0.6
+  forward_horizons: [5, 10, 20, 40, 60]
+  empty_guard_min_previous: 5
+  publish:
+    remote: origin
+    branch: main
+    # Chi cac duong dan nay duoc commit/push (khong bao gio day du lieu gia goc, log, archive)
+    allowed_paths: [data]
+
+sectors:
+  # ten hien thi tieng Viet cho nhom nganh (watchlist AmiBroker -> nhan web)
+  names_vi:
+    Ngan hang: Ngân hàng
+    Chung khoan: Chứng khoán
+    Bat dong san: Bất động sản
+    BDS KCN: BĐS khu công nghiệp
+    Thep: Thép
+    Ban le: Bán lẻ
+    Thuc pham: Thực phẩm
+    Thuy san: Thủy sản
+    Dau khi: Dầu khí
+    Dien: Điện
+    Hoa chat: Hóa chất
+    Cong nghe: Công nghệ
+    Logistics: Logistics
+    Hang khong: Hàng không
+    Xay dung: Xây dựng
+    Bao hiem: Bảo hiểm
+    Det may: Dệt may
+    Cong nghiep: Công nghiệp
+    Tieu dung: Tiêu dùng
+
+strategies:
+  - id: VCP
+    name_vi: VCP – Nền co hẹp biến động
+    description: Phát hiện nền giá co hẹp dần (Volatility Contraction Pattern) và điểm sắp bứt phá. Đạt khi trạng thái là Forming, Pre-Breakout hoặc Breakout, đủ thanh khoản.
+    enabled: true
+    version: "1.0"
+    afl: Hub_VCP.afl
+    source_afl: [Formulas\PTKT\VCP_Explorer.afl, Formulas\Include\VCP_Core.afl]
+    apx: null
+    apply_to: all
+    two_pass: false
+    supports_backfill: true
+    columns: {ticker: Ticker, date: DateNum, state_code: StateCode, state: State, score: Score}
+    pass_rule: null
+    score_name: Điểm chất lượng VCP (0–100)
+    scoring: Điểm chất lượng của VCP_Core (độ co hẹp, khô khối lượng, xu hướng, RS, vị trí so với pivot). Hạng = thứ tự điểm giảm dần trong danh sách đạt của phiên.
+    state_labels: {1: Forming, 2: Pre-Breakout, 3: Breakout}
+    metrics:
+      - {col: Strict, key: strict, label: Đạt Strict Template, unit: bool}
+      - {col: BaseDays, key: base_days, label: Số phiên nền, unit: phiên}
+      - {col: TCount, key: t_count, label: Số nhịp co hẹp, unit: nhịp}
+      - {col: FinalTightPct, key: final_tight_pct, label: Nhịp cuối (%), unit: "%"}
+      - {col: VDU, key: vdu, label: Khô khối lượng (VDU), unit: lần}
+      - {col: Pivot, key: pivot, label: Pivot, unit: nghìn đồng}
+      - {col: DistPivotPct, key: dist_pivot_pct, label: Cách pivot (%), unit: "%"}
+      - {col: RVol, key: rvol, label: KL tương đối, unit: lần}
+      - {col: Stop, key: stop, label: Stop tham khảo, unit: nghìn đồng}
+      - {col: RiskPct, key: risk_pct, label: Rủi ro vào lệnh (%), unit: "%"}
+
+  - id: WYCKOFF
+    name_vi: Wyckoff – Tích lũy
+    description: Phát hiện nền tích lũy Wyckoff và giai đoạn chuyển sang tăng giá (Spring, Test, Pre-SOS, SOS, LPS). Đạt theo bộ lọc "Tất cả ứng viên tích lũy" của Screener gốc.
+    enabled: true
+    version: "1.0"
+    afl: Hub_Wyckoff.afl
+    source_afl: [Formulas\PTKT\Wyckoff_VN_Screener.afl, Formulas\Include\Wyckoff_VN_core.afl]
+    apx: null
+    apply_to: all
+    two_pass: false
+    supports_backfill: true
+    columns: {ticker: Ticker, date: DateNum, state_code: StateCode, state: State, score: Score}
+    pass_rule: null
+    score_name: Wyckoff Score (0–100)
+    scoring: Tổng có trọng số 6 mô-đun của Wyckoff_VN_core (chất lượng nền 20, hấp thụ cung 25, co hẹp 15, RS 15, cấu trúc 15, giá/KL 10), trừ điểm phạt.
+    state_labels: {1: Tạo nền, 2: Spring, 3: Test, 4: Pre-SOS Early, 5: Pre-SOS Ready, 6: SOS, 7: LPS}
+    metrics:
+      - {col: BaseDuration, key: base_duration, label: Độ dài nền, unit: phiên}
+      - {col: BaseWidthPct, key: base_width_pct, label: Độ rộng nền (%), unit: "%"}
+      - {col: DistBreakoutPct, key: dist_breakout_pct, label: Cách điểm bứt phá (%), unit: "%"}
+      - {col: RewardRisk, key: reward_risk, label: Lời/lỗ tham khảo, unit: lần}
+      - {col: Stop, key: stop, label: Stop tham khảo, unit: nghìn đồng}
+      - {col: Extended, key: extended, label: Đã chạy xa, unit: bool}
+
+  - id: PULLBACK
+    name_vi: Trend Pullback
+    description: Cổ phiếu trong xu hướng tăng đang điều chỉnh về vùng hỗ trợ. Đạt theo bộ lọc mặc định "Ưu tiên S3–S6" của Scanner gốc.
+    enabled: true
+    version: "1.0"
+    afl: Hub_Pullback.afl
+    source_afl: [Formulas\PTKT\TrendPullback_Scanner.afl, Formulas\Include\TrendPullback_core.afl]
+    apx: null
+    apply_to: all
+    two_pass: false
+    supports_backfill: true
+    columns: {ticker: Ticker, date: DateNum, state_code: StateCode, state: State, score: Score}
+    pass_rule: null
+    score_name: Total Score (0–100)
+    scoring: Total Score của TrendPullback_core (xu hướng, chất lượng pullback, đảo chiều, RS, thanh khoản).
+    state_labels: {3: S3 Gần hỗ trợ, 4: S4 Chờ đảo chiều, 5: S5 Mua sớm, 6: S6 Mua xác nhận}
+    metrics:
+      - {col: TrendScore, key: trend_score, label: Trend Score, unit: điểm}
+      - {col: PullbackScore, key: pullback_score, label: Pullback Score, unit: điểm}
+      - {col: ReversalScore, key: reversal_score, label: Reversal Score, unit: điểm}
+      - {col: DepthPct, key: depth_pct, label: Độ sâu điều chỉnh (%), unit: "%"}
+      - {col: PullbackDays, key: pullback_days, label: Số phiên điều chỉnh, unit: phiên}
+      - {col: Stop, key: stop, label: Stop tham khảo, unit: nghìn đồng}
+      - {col: RiskPct, key: risk_pct, label: Rủi ro (%), unit: "%"}
+      - {col: RewardRisk, key: reward_risk, label: Lời/lỗ tham khảo, unit: lần}
+
+  - id: RS
+    name_vi: Relative Strength
+    description: Cổ phiếu mạnh hơn VN-Index theo bảng Xếp hạng PTKT (rổ watchlist 0 "PTKT 108 mã"). Đạt khi RS Rating ≥ 80.
+    enabled: true
+    version: "1.0"
+    afl: Hub_RS.afl
+    source_afl: [Formulas\PTKT\Xep hang - Sieu song.afl, Formulas\Include\PTKT_core.afl]
+    apx: null
+    apply_to: watchlist:0
+    two_pass: true
+    supports_backfill: false
+    columns: {ticker: Ma, date: null, state_code: null, state: Tin hieu, score: RS Rating}
+    pass_rule: {column: RS Rating, op: ">=", value: 80}
+    score_name: RS Rating (1–99)
+    scoring: RS Rating cắt ngang rổ PTKT (hạng phần trăm hiệu suất có trọng số so với VN-Index). Chỉ tính được phiên cuối, không tái tạo lịch sử.
+    state_labels: {}
+    metrics:
+      - {col: Diem, key: ptkt_score, label: Điểm PTKT, unit: điểm}
+      - {col: RS da khung, key: rs_mtf, label: RS đa khung, unit: điểm}
+      - {col: Goc RRG, key: rrg, label: Góc RRG, unit: text}
+      - {col: RS-Z, key: rs_z, label: RS-Z, unit: z}
+      - {col: RS-Mom, key: rs_mom, label: RS-Mom, unit: z}
+      - {col: MF-Z, key: mf_z, label: MF-Z dòng tiền, unit: z}
+      - {col: Sieu song, key: super_wave, label: Siêu sóng, unit: text}
+
+  - id: ROTATION
+    name_vi: Sector Rotation
+    description: Cổ phiếu thuộc ngành đang mạnh hơn VN-Index và chính nó mạnh hơn ngành, đang tăng tốc. Quy tắc do Hub ghép từ các chỉ báo có sẵn (PtktSector), CHƯA được backtest.
+    enabled: true
+    version: "0.1"
+    afl: Hub_Rotation.afl
+    source_afl: [Formulas\Include\PTKT_core.afl (PtktSector), Formulas\PTKT\8. RS so voi nganh.afl]
+    apx: null
+    apply_to: all
+    two_pass: false
+    supports_backfill: true
+    columns: {ticker: Ticker, date: DateNum, state_code: StateCode, state: State, score: Score}
+    pass_rule: null
+    score_name: RS-Z so với ngành
+    scoring: Điểm = RS-Z của cổ phiếu so với chỉ số ngành NGANH_* (z-score). Chỉ áp dụng cho mã thuộc 19 nhóm ngành PTKT.
+    state_labels: {1: Ngành dẫn dắt + vượt ngành}
+    metrics:
+      - {col: RSMomVsSector, key: rs_mom_vs_sector, label: RS-Mom so với ngành, unit: z}
+      - {col: SectorRSZ, key: sector_rsz, label: RS-Z ngành vs VN-Index, unit: z}
+      - {col: ExcessVsSector63Pct, key: excess_vs_sector_63, label: Vượt ngành 3 tháng (%), unit: "%"}
+
+  - id: HIGH_BETA
+    name_vi: High Beta
+    description: Cổ phiếu thanh khoản tốt, nhạy với thị trường tăng (beta, upside capture, RS). Đạt khi Composite Score ≥ 70 (chế độ "Elite + Strong" của Exploration gốc).
+    enabled: true
+    version: "1.0"
+    afl: Hub_HighBeta.afl
+    source_afl: [Formulas\PTKT\HighBeta_Exploration.afl, Formulas\Include\HighBeta_Core.afl]
+    apx: null
+    apply_to: all
+    two_pass: true
+    supports_backfill: false
+    columns: {ticker: Ticker, date: null, state_code: null, state: Setup Type, score: Composite Score}
+    pass_rule: {column: Composite Score, op: ">=", value: 70}
+    score_name: Composite Score (0–100)
+    scoring: Composite của HighBeta_Core = 35% nhóm beta, 25% RS, 20% dòng tiền, 20% xu hướng/nền (phân vị cắt ngang rổ đủ thanh khoản). Chỉ tính phiên cuối.
+    state_labels: {}
+    metrics:
+      - {col: Phan loai, key: class, label: Phân loại, unit: text}
+      - {col: High-Beta Score, key: high_beta_score, label: High-Beta Score, unit: điểm}
+      - {col: Asymmetric Upside Score, key: asym_score, label: Asymmetric Upside, unit: điểm}
+      - {col: Market Rank, key: market_rank_native, label: Hạng toàn rổ (gốc), unit: hạng}
+      - {col: Beta60, key: beta60, label: Beta 60 phiên, unit: lần}
+      - {col: Upside Capture, key: upside_capture, label: Upside capture, unit: lần}
+      - {col: Entry Status, key: entry_status, label: Trạng thái điểm vào, unit: text}
+      - {col: Market Regime, key: regime, label: Thị trường, unit: text}
+
+# Exploration phu tro (khong phai chien luoc chon co phieu): bang nganh cho trang Sector Rotation
+auxiliary:
+  - id: SECTORS
+    afl: Hub_Sectors.afl
+    apply_to: watchlist:63
+    supports_backfill: true

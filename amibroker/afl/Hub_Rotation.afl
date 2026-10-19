@@ -1,0 +1,28 @@
+// =====================================================================
+// Hub_Rotation.afl - SECTOR ROTATION (cap co phieu) cho AmiBroker Exploration Hub
+// QUY TAC MOI DO HUB DINH NGHIA (chua backtest), chi ghep cac chi bao CO SAN trong
+//   Formulas\Include\PTKT_core.afl > PtktSector() (giong chart "8. RS so voi nganh"):
+//   dat khi  PS_secRsz > 0   : chi so nganh NGANH_* manh hon VNINDEX (RS-Z)
+//        va  PS_rsz > 0      : co phieu manh hon chinh nganh cua no (RS-Z)
+//        va  PS_rsm > 0      : suc manh so voi nganh dang tang toc (RS-Mom)
+//        va  GTGD TB20 >= 2 ty.
+// Diem = RS-Z so voi nganh. Nganh = watchlist hien tai (1..17, 40..41) -> lich su tai tao dung
+//   danh sach nganh HIEN TAI (ghi ro tren web).
+// =====================================================================
+#include_once <PTKT_core.afl>
+PtktSector();
+mk = MarketID();
+val20 = MA(C * V, 20) / 1e6;
+Filter = PS_sector != "" AND PS_secRsz > 0 AND PS_rsz > 0 AND PS_rsm > 0 AND val20 >= 2 AND mk <= 2;
+
+SetOption("NoDefaultColumns", True);
+AddTextColumn(Name(), "Ticker", 1.0);
+AddColumn(DateNum(), "DateNum", 1.0);
+AddColumn(1, "StateCode", 1.0);
+AddTextColumn("Nganh dan dat + vuot nganh", "State", 1.0);
+AddColumn(PS_rsz, "Score", 1.3);
+AddTextColumn(PS_sector, "Sector", 1.0);
+AddColumn(PS_rsm, "RSMomVsSector", 1.3);
+AddColumn(PS_secRsz, "SectorRSZ", 1.3);
+AddColumn(PS_ex63, "ExcessVsSector63Pct", 1.2);
+AddColumn(val20, "Val20", 1.2);

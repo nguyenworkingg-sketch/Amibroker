@@ -1,0 +1,29 @@
+// =====================================================================
+// Hub_Pullback.afl - ADAPTER cho AmiBroker Exploration Hub (KHONG doi logic sang loc)
+// Logic: Formulas\Include\TrendPullback_core.afl (TpCompute) - giong PTKT\TrendPullback_Scanner.afl.
+// Quy tac "dat" cua Hub = bo loc mac dinh cua Scanner "Uu tien S3-S6": TP_state 3..6 AND TP_liqOk,
+//   san HOSE/HNX/UPCoM. Khac Scanner o 1 diem: dung mang theo tung phien (khong LastValue)
+//   de chay Range From-To tai tao lich su; o phien cuoi ket qua trung voi Scanner.
+// =====================================================================
+#include_once <TrendPullback_core.afl>
+TpCompute();
+st = TP_state;
+mk = MarketID();
+Filter = st >= 3 AND st <= 6 AND TP_liqOk AND mk <= 2;
+
+SetOption("NoDefaultColumns", True);
+AddTextColumn(Name(), "Ticker", 1.0);
+AddColumn(DateNum(), "DateNum", 1.0);
+AddColumn(st, "StateCode", 1.0);
+AddMultiTextColumn(st, "S0 -\nS1 Uptrend\nS2 Dang dieu chinh\nS3 Gan ho tro\nS4 Cho dao chieu\nS5 MUA SOM\nS6 MUA XAC NHAN\nS7 Chay xa\nS8 Vo hieu", "State");
+AddColumn(TP_total, "Score", 1.1);
+AddColumn(TP_ts, "TrendScore", 1.0);
+AddColumn(TP_pbq, "PullbackScore", 1.0);
+AddColumn(TP_rev, "ReversalScore", 1.0);
+AddColumn(TP_rss, "RSScore", 1.0);
+AddColumn(TP_depth * 100, "DepthPct", 1.2);
+AddColumn(TP_pdays, "PullbackDays", 1.0);
+AddColumn(TP_stop, "Stop", 1.2);
+AddColumn(TP_risk * 100, "RiskPct", 1.2);
+AddColumn(TP_rr, "RewardRisk", 1.2);
+AddColumn(TP_val20, "Val20", 1.2);

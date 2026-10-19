@@ -1,0 +1,28 @@
+// =====================================================================
+// Hub_Wyckoff.afl - ADAPTER cho AmiBroker Exploration Hub (KHONG doi logic sang loc)
+// Logic: Formulas\Include\Wyckoff_VN_core.afl (WyCompute) - giong PTKT\Wyckoff_VN_Screener.afl.
+// Quy tac "dat" cua Hub = bo loc "Tat ca ung vien tich luy" cua Screener: Wy_stage >= 1,
+//   GTGD20 >= Wy_minVal, so phien KL=0 (20p) <= 2, khong phai chi so.
+// Dung mang theo tung phien (khong LastValue) de chay Range From-To tai tao lich su.
+// =====================================================================
+#include_once <Wyckoff_VN_core.afl>
+WyCompute();
+st = Wy_stage;
+liq = Wy_val20 >= Wy_minVal AND Wy_zero20 <= 2;
+scoreShow = IIf(Wy_base, Wy_score, ValueWhen(Wy_base, Wy_score));
+mk = MarketID();
+Filter = st >= 1 AND liq AND mk <= 2;
+
+SetOption("NoDefaultColumns", True);
+AddTextColumn(Name(), "Ticker", 1.0);
+AddColumn(DateNum(), "DateNum", 1.0);
+AddColumn(st, "StateCode", 1.0);
+AddMultiTextColumn(st, "-\nTao nen\nSpring\nTest\nPre-SOS Early\nPre-SOS Ready\nSOS\nLPS", "State");
+AddColumn(scoreShow, "Score", 1.1);
+AddColumn(IIf(Wy_base, Wy_L, Null), "BaseDuration", 1.0);
+AddColumn(Wy_Wpct, "BaseWidthPct", 1.2);
+AddColumn(Wy_distPct, "DistBreakoutPct", 1.2);
+AddColumn(Wy_rr, "RewardRisk", 1.2);
+AddColumn(Wy_stop, "Stop", 1.2);
+AddColumn(Wy_ext + 0, "Extended", 1.0);
+AddColumn(Wy_val20, "Val20", 1.2);
