@@ -1,6 +1,6 @@
 // =====================================================================
 // Hub_Wyckoff.afl - ADAPTER cho AmiBroker Exploration Hub (KHONG doi logic sang loc)
-// Logic: Formulas\Include\Wyckoff_VN_core.afl (WyCompute) - giong PTKT\Wyckoff_VN_Screener.afl.
+// Logic: Formulas\Include\Wyckoff_VN_core.afl (WyCompute) - giong Explore\Wyckoff_VN_Screener.afl.
 // Quy tac "dat" cua Hub = bo loc "Tat ca ung vien tich luy" cua Screener: Wy_stage >= 1,
 //   GTGD20 >= Wy_minVal, so phien KL=0 (20p) <= 2, khong phai chi so.
 // Dung mang theo tung phien (khong LastValue) de chay Range From-To tai tao lich su.

@@ -1,6 +1,6 @@
 // =====================================================================
 // Hub_VCP.afl - ADAPTER cho AmiBroker Exploration Hub (KHONG doi logic sang loc)
-// Logic: Formulas\Include\VCP_Core.afl (VcCompute) - giong het PTKT\VCP_Explorer.afl.
+// Logic: Formulas\Include\VCP_Core.afl (VcCompute) - giong het Explore\VCP_Explorer.afl.
 // Quy tac "dat" cua Hub: VC_state 1..3 (Forming / Pre-Breakout / Breakout) = che do "All VCP"
 //   cua VCP_Explorer nhung bo trang thai Failed(4)/Extended(5); co bo loc thanh khoan VC_liqOk;
 //   san HOSE/HNX/UPCoM (loc san lam tren web).
