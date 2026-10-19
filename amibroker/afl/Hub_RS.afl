@@ -1,9 +1,9 @@
 // =====================================================================
 // Hub_RS.afl - RELATIVE STRENGTH cho AmiBroker Exploration Hub
-// Chay NGUYEN BAN file goc PTKT\"Xep hang - Sieu song.afl" (khong sua 1 dong nao). File nay chi
+// Chay NGUYEN BAN file goc Explore\"Xep hang - Sieu song.afl" (khong sua 1 dong nao). File nay chi
 //   nam o duong dan rieng de Analysis dung THAM SO MAC DINH trong code (ro = watchlist 0
 //   "PTKT 108 ma", chi so tham chieu VNINDEX), khong phu thuoc tham so anh/chi dang chinh tay.
 // Can 2 luot: SCAN roi EXPLORE (exporter tu lam). Chi tinh duoc PHIEN CUOI (RS Rating cheo).
 // Quy tac "dat" (ap dung trong exporter, xem strategy_config.yaml): RS Rating >= 80.
 // =====================================================================
-#include "C:\Program Files (x86)\AmiBroker\Formulas\PTKT\Xep hang - Sieu song.afl"
+#include "C:\Program Files (x86)\AmiBroker\Formulas\Explore\Xep hang - Sieu song.afl"

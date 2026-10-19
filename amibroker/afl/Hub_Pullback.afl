@@ -1,6 +1,6 @@
 // =====================================================================
 // Hub_Pullback.afl - ADAPTER cho AmiBroker Exploration Hub (KHONG doi logic sang loc)
-// Logic: Formulas\Include\TrendPullback_core.afl (TpCompute) - giong PTKT\TrendPullback_Scanner.afl.
+// Logic: Formulas\Include\TrendPullback_core.afl (TpCompute) - giong Explore\TrendPullback_Scanner.afl.
 // Quy tac "dat" cua Hub = bo loc mac dinh cua Scanner "Uu tien S3-S6": TP_state 3..6 AND TP_liqOk,
 //   san HOSE/HNX/UPCoM. Khac Scanner o 1 diem: dung mang theo tung phien (khong LastValue)
 //   de chay Range From-To tai tao lich su; o phien cuoi ket qua trung voi Scanner.

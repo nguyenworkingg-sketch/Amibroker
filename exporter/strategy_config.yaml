@@ -70,7 +70,7 @@ strategies:
     enabled: true
     version: "1.0"
     afl: Hub_VCP.afl
-    source_afl: [Formulas\PTKT\VCP_Explorer.afl, Formulas\Include\VCP_Core.afl]
+    source_afl: [Formulas\Explore\VCP_Explorer.afl, Formulas\Include\VCP_Core.afl]
     apx: null
     apply_to: all
     two_pass: false
@@ -98,7 +98,7 @@ strategies:
     enabled: true
     version: "1.0"
     afl: Hub_Wyckoff.afl
-    source_afl: [Formulas\PTKT\Wyckoff_VN_Screener.afl, Formulas\Include\Wyckoff_VN_core.afl]
+    source_afl: [Formulas\Explore\Wyckoff_VN_Screener.afl, Formulas\Include\Wyckoff_VN_core.afl]
     apx: null
     apply_to: all
     two_pass: false
@@ -122,7 +122,7 @@ strategies:
     enabled: true
     version: "1.0"
     afl: Hub_Pullback.afl
-    source_afl: [Formulas\PTKT\TrendPullback_Scanner.afl, Formulas\Include\TrendPullback_core.afl]
+    source_afl: [Formulas\Explore\TrendPullback_Scanner.afl, Formulas\Include\TrendPullback_core.afl]
     apx: null
     apply_to: all
     two_pass: false
@@ -148,7 +148,7 @@ strategies:
     enabled: true
     version: "1.0"
     afl: Hub_RS.afl
-    source_afl: [Formulas\PTKT\Xep hang - Sieu song.afl, Formulas\Include\PTKT_core.afl]
+    source_afl: [Formulas\Explore\Xep hang - Sieu song.afl, Formulas\Include\PTKT_core.afl]
     apx: null
     apply_to: watchlist:0
     two_pass: true
@@ -194,7 +194,7 @@ strategies:
     enabled: true
     version: "1.0"
     afl: Hub_HighBeta.afl
-    source_afl: [Formulas\PTKT\HighBeta_Exploration.afl, Formulas\Include\HighBeta_Core.afl]
+    source_afl: [Formulas\Explore\HighBeta_Exploration.afl, Formulas\Include\HighBeta_Core.afl]
     apx: null
     apply_to: all
     two_pass: true
