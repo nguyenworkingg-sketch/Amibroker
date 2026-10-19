@@ -1,0 +1,1 @@
+{"ticker":"VCK","name":"VPS","exchange":"HOSE","sector":"Chứng khoán","timeline":[{"date":"2026-10-19","s":{"ROTATION":[0.734,19,"NEW","Ngành dẫn dắt + vượt ngành"]}}],"rs":[],"close":[["2026-10-19",28.0]],"episodes":[{"strategy_id":"ROTATION","start":"2026-10-19","status":"NEW","score":0.734,"origin":"live","forward":{"5":null,"10":null,"20":null,"40":null,"60":null}}]}
