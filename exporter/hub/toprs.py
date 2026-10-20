@@ -91,6 +91,55 @@ def compute(market, enter: float = 90, exit_: float = 80, min_value: float = 2.0
             "open": list(state.values()), "closed": episodes}
 
 
+def _w_last(c: np.ndarray) -> np.ndarray:
+    """PtktPerfW tai phien CUOI cua ma tran gia (phien x ma), co fallback 126/189/252 nhu AFL."""
+    last = c[-1]
+    r = {}
+    for n in (63, 126, 189, 252):
+        r[n] = last / c[-1 - n] if c.shape[0] > n else np.full(c.shape[1], np.nan)
+    r[126] = np.where(np.isnan(r[126]), r[63], r[126])
+    r[189] = np.where(np.isnan(r[189]), r[126], r[189])
+    r[252] = np.where(np.isnan(r[252]), r[189], r[252])
+    return 0.4 * r[63] + 0.2 * r[126] + 0.2 * r[189] + 0.2 * r[252]
+
+
+def intraday_estimate(market, doc: dict, live: dict[str, float], bench_live: float, icb: dict | None = None) -> dict:
+    """Uoc tinh RS Rating hom nay = chuoi gia da chot + gia tam hom nay (ma khong co gia tam: giu gia hom qua).
+    Ro = ro cua phien da chot gan nhat. -> {enters, exits, coverage, universe}"""
+    rule = doc["rule"]
+    enter, exit_ = float(rule["enter"]), float(rule["exit"])
+    last = len(market.calendar) - 1
+    univ = [t for t in market.cf.columns if bool(market.traded[t].iloc[last]) and (market.adv20[t].iloc[last] or 0) >= rule["min_value_bil"]]
+    base = market.cf[univ].to_numpy()
+    today = np.array([live.get(t, base[-1, j]) for j, t in enumerate(univ)])
+    c = np.vstack([base, today])
+    b = np.append(market.bench_close.to_numpy(), bench_live)[:, None]
+    perf = _w_last(c) / _w_last(b)[0]
+    sn = int(rule.get("short_sessions", 20))
+    short = (c[-1] / c[-1 - sn]) / (b[-1, 0] / b[-1 - sn, 0])
+    ok = ~np.isnan(perf)
+    def rate(v, mask):
+        s = pd.Series(np.where(mask, v, np.nan))
+        return (np.floor(s.rank(method="average") / s.notna().sum() * 98 + 1 + 0.5)).to_numpy()
+    mid_r = rate(perf, ok)
+    short_r = rate(short, ~np.isnan(short))
+    in_top = {r["ticker"] for r in doc.get("rows", [])}
+    icb = icb or {}
+    enters, exits = [], []
+    for j, t in enumerate(univ):
+        if t not in live or np.isnan(mid_r[j]):
+            continue  # chi canh bao ma co gia that trong phien
+        row = {"ticker": t, "sector": (icb.get(t) or {}).get("icb4"), "sm_mid": float(mid_r[j]),
+               "sm_short": None if np.isnan(short_r[j]) else float(short_r[j]), "price": float(today[j]), "exit": exit_}
+        if t not in in_top and mid_r[j] >= enter:
+            enters.append(row)
+        elif t in in_top and mid_r[j] < exit_:
+            exits.append(row)
+    enters.sort(key=lambda r: -r["sm_mid"])
+    exits.sort(key=lambda r: r["sm_mid"])
+    return {"enters": enters, "exits": exits, "universe": len(univ), "coverage": sum(1 for t in univ if t in live)}
+
+
 def build(cfg: Config, market, out_dir: Path) -> int:
     """Ghi data/toprs/latest.json. Tra ve so file thay doi."""
     st = cfg.settings.get("top_rs", {})
@@ -161,4 +210,13 @@ def build(cfg: Config, market, out_dir: Path) -> int:
                     "avg_excess_pct": clean_number(float(np.mean(exs)), 2) if exs else None},
         "rows": rows, "recent_exits": exits, "series": series,
     }
+    # danh sach ma trong ro -> bo cap nhat trong phien (DNSE) lay gia cho ca ro (canh bao trong phien)
+    wl = st.get("live_watchlist_file")
+    if wl:
+        univ = sorted(t for t in res["universe"].columns if bool(res["universe"][t].iloc[last]))
+        try:
+            Path(wl).write_text("# Ro Top RS (GTGD20 >= %.0f ty) - Hub ghi moi toi, dung cho canh bao trong phien\n" % min_value
+                                + "\n".join(univ) + "\n", encoding="utf-8")
+        except OSError:
+            pass
     return int(write_json(out_dir / "toprs" / "latest.json", doc))

@@ -67,6 +67,17 @@ def main() -> int:
         except RuntimeError as e:
             log.error("PUBLISH loi: %s", e)
             code = max(code, 1)
+    # Tin Telegram cuoi ngay (Top RS) - chi khi chay that (khong phai tai tao lich su), moi phien 1 lan
+    if not a.backfill and rec["result"] in ("success", "partial"):
+        try:
+            from hub.notify import Telegram, eod_toprs
+            from hub.util import read_json
+            tg = Telegram(cfg)
+            if tg.configured:
+                sent = eod_toprs(cfg, read_json(cfg.data_dir / "toprs" / "latest.json"), tg)
+                log.info("TELEGRAM cuoi ngay: %s", "da gui" if sent else "khong gui (da gui phien nay / loi)")
+        except Exception as e:  # thong bao loi khong lam hong lan chay
+            log.error("TELEGRAM loi: %s", e)
     return code
 
 
