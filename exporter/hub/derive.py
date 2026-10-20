@@ -263,6 +263,11 @@ def build_site(cfg: Config, market=None, *, build_time: str | None = None, demo:
         dates = [d for d in market.sessions() if d.isoformat() >= (all_sessions[0] if len(all_sessions) > 1 else "0000")][-260:]
         written += write_json(dd / "market" / "breadth.json", {"series": market.breadth(dates)})
     written += write_json(dd / "market" / "signal_trend.json", {"series": signal_trend})
+    if market is not None:
+        from .toprs import build as build_toprs
+        written += build_toprs(cfg, market, dd)
+    elif not (dd / "toprs" / "latest.json").exists():
+        written += write_json(dd / "toprs" / "latest.json", {"available": False})
     written += _build_sectors(cfg, sectors, session_index and all_sessions[-1], st, snaps)
 
     # ---------------------------------------------------------------- meta + tong quan

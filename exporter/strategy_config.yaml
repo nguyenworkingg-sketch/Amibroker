@@ -34,6 +34,13 @@ settings:
   round_trip_cost_pct: 0.6
   forward_horizons: [5, 10, 20, 40, 60]
   empty_guard_min_previous: 5
+  # Trang "Top RS": co phieu trong nhom RS cao nhat TOAN THI TRUONG (xem exporter/hub/toprs.py)
+  top_rs:
+    enter: 90            # vao top khi RS Rating (SM trung han) >= 90 (~ top 10%)
+    exit: 80             # chi roi top khi < 80 (vung dem)
+    min_value_bil: 2.0   # ro: GTGD TB20 >= 2 ty
+    short_sessions: 20   # SM ngan han = hang loi suat vuot VNINDEX 20 phien
+    icb_file: reference/icb_sectors.csv   # cap nhat: python exporter\fetch_icb.py
   publish:
     remote: origin
     branch: main

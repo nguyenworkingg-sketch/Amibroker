@@ -57,6 +57,7 @@ Bản ghi gốc của một phương pháp tại một phiên. Đây là nguồn
 | `market/signal_trend.json` | Số mã đạt theo phương pháp mỗi phiên |
 | `performance/forward.json` | Hiệu suất sau tín hiệu theo phương pháp × kỳ hạn (5/10/20/40/60 phiên): gộp, sau phí, VN-Index, vượt trội |
 | `backtest/index.json` | Báo cáo backtest đã nhập (nếu có) |
+| `toprs/latest.json` | Trang Top RS: mã đang trong top (ngày vào, số phiên, SM ngắn/trung hạn, giá vào, lợi suất so với VN-Index), mã rời top 20 phiên gần đây, tổng kết, chuỗi số mã trong top |
 
 ## Trạng thái tín hiệu
 
@@ -80,3 +81,12 @@ So với **phiên có dữ liệu liền trước của cùng phương pháp** (
 ## Đọc CSV
 
 `hub/csvio.py`: thử UTF-8 (có/không BOM) → Windows-1258 → Windows-1252; chuẩn hóa Unicode NFC; nhận dấu phân cách `,` `;` tab; dấu thập phân `.` hoặc `,`; tên cột không phân biệt hoa thường/khoảng trắng; `""`, `-`, `{EMPTY}`, `N/A`, Null nội bộ của AmiBroker (`-1e10`) → `null`. Ngày nhận `DateNum` AmiBroker (`1261016`), `YYYYMMDD`, `YYYY-MM-DD`, `DD/MM/YYYY`.
+
+## Top RS (`toprs/latest.json`)
+
+* Rổ mỗi phiên: mã HOSE/HNX/UPCoM có giao dịch và GTGD20 ≥ `top_rs.min_value_bil` (2 tỷ).
+* **SM trung hạn** = RS Rating 1–99, cùng công thức `PTKT_core.afl` (PtktPerfW + PtktRank): `round((số nhỏ hơn + (số bằng + 1)/2) / n × 98 + 1)`.
+* **SM ngắn hạn** = cùng cách xếp hạng trên lợi suất vượt VN-Index 20 phiên.
+* Vào top khi SM trung hạn ≥ `enter` (90); rời khi < `exit` (80), hoặc khi không được xếp hạng quá 10 phiên liên tiếp (`exit_reason = illiquid`).
+* `entry_censored = true`: mã đã ở top từ trước ngày bắt đầu theo dõi (`tracking_since`), nên giá vào không phải giá vào thật và không tính vào `summary`.
+* Tính lại toàn bộ mỗi lần từ chuỗi giá AmiBroker (giá đã điều chỉnh), không dùng dữ liệu sau từng phiên. Phân ngành: `exporter/reference/icb_sectors.csv` (ICB cấp 4 của VNDirect, cập nhật bằng `python exporteretch_icb.py`).

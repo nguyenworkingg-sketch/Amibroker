@@ -257,3 +257,43 @@ export interface BacktestDoc {
     benchmark?: Record<string, number | null>
   }[]
 }
+
+export interface TopRsRow {
+  ticker: string
+  name: string | null
+  exchange: string | null
+  sector: string | null
+  sector_l3: string | null
+  entry_date: string
+  entry_censored: boolean
+  entry_price: number | null
+  price: number | null
+  ret_pct: number | null
+  vni_ret_pct: number | null
+  excess_pct: number | null
+  max_ret_pct: number | null
+  sessions: number
+  new_today?: boolean
+  sm_short?: number | null
+  sm_mid?: number | null
+  sm_mid_entry?: number | null
+  avg_trading_value_20?: number | null
+  ranked_today?: boolean
+  exit_date?: string
+  exit_reason?: 'rs' | 'illiquid' | null
+  sm_mid_exit?: number | null
+}
+
+export interface TopRsDoc {
+  available: boolean
+  session?: string
+  tracking_since?: string
+  rule?: { enter: number; exit: number; min_value_bil: number; short_sessions: number }
+  summary?: {
+    universe: number; in_top: number; censored: number; measured: number; new_today: number; exits_today: number
+    pct_positive: number | null; avg_ret_pct: number | null; median_ret_pct: number | null; avg_excess_pct: number | null
+  }
+  rows?: TopRsRow[]
+  recent_exits?: TopRsRow[]
+  series?: { date: string; in_top: number; new: number; exits: number; universe: number }[]
+}
