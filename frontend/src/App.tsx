@@ -14,12 +14,14 @@ const History = lazy(() => import('./pages/History'))
 const Sectors = lazy(() => import('./pages/Sectors'))
 const Stock = lazy(() => import('./pages/Stock'))
 const Backtest = lazy(() => import('./pages/Backtest'))
+const TopRs = lazy(() => import('./pages/TopRs'))
 const Status = lazy(() => import('./pages/Status'))
 
 const NAV = [
   { path: '/', label: 'Tổng quan' },
   { path: '/exploration', label: 'Daily Exploration' },
   { path: '/ranking', label: 'Strategy Ranking' },
+  { path: '/top-rs', label: 'Top RS' },
   { path: '/history', label: 'Signal History' },
   { path: '/sectors', label: 'Sector Rotation' },
   { path: '/stock', label: 'Stock Detail' },
@@ -84,6 +86,7 @@ export default function App() {
         '/': <Overview {...p} />,
         '/exploration': <Exploration {...p} route={route} />,
         '/ranking': <Ranking {...p} route={route} />,
+        '/top-rs': <TopRs {...p} route={route} />,
         '/history': <History {...p} route={route} />,
         '/sectors': <Sectors {...p} route={route} />,
         '/stock': <Stock {...p} route={route} />,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type {
-  BacktestDoc, BreadthDoc, ForwardDoc, HistoryIndex, Meta, SectorsDoc, SessionDoc, SignalTrendDoc, StatusDoc, SummaryDoc, TickerDoc,
+  BacktestDoc, BreadthDoc, TopRsDoc, ForwardDoc, HistoryIndex, Meta, SectorsDoc, SessionDoc, SignalTrendDoc, StatusDoc, SummaryDoc, TickerDoc,
 } from './types'
 
 const BASE = `${import.meta.env.BASE_URL}data/`
@@ -33,6 +33,7 @@ export const api = {
   signalTrend: () => fetchJson<SignalTrendDoc>('market/signal_trend.json'),
   forward: () => fetchJson<ForwardDoc>('performance/forward.json'),
   backtest: () => fetchJson<BacktestDoc>('backtest/index.json'),
+  topRs: () => fetchJson<TopRsDoc>('toprs/latest.json'),
 }
 
 export interface Loadable<T> {

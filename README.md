@@ -35,6 +35,8 @@ Chi tiết: [docs/architecture.md](docs/architecture.md).
 | ROTATION | Sector Rotation | `PTKT_core.afl › PtktSector` | ngành mạnh hơn VNINDEX + mã mạnh hơn ngành và tăng tốc — **quy tắc mới của Hub, chưa backtest** | Có |
 | HIGH_BETA | High Beta | `HighBeta_Exploration.afl` | Composite ≥ 70 (chế độ “Elite + Strong”) | Không (chỉ phiên cuối) |
 
+Trang **Top RS**: cổ phiếu trong nhóm RS cao nhất toàn thị trường (vào ≥ 90, rời < 80, rổ GTGD20 ≥ 2 tỷ), kèm ngày vào top, giá vào và lợi suất so với VN-Index — xem [docs/data-contract.md](docs/data-contract.md#top-rs-toprslatestjson).
+
 Thêm phương pháp mới: thêm một mục trong [`exporter/strategy_config.yaml`](exporter/strategy_config.yaml) — frontend tự hiển thị. Xem [docs/strategy-registry.md](docs/strategy-registry.md).
 
 ## Cài đặt trên máy Windows chạy AmiBroker
