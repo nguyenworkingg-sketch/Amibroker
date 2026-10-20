@@ -1,6 +1,18 @@
 {
   "runs": [
     {
+      "run_id": "b68ecffd8292",
+      "kind": "daily",
+      "started_at": "2026-10-20T09:37:53+07:00",
+      "finished_at": "2026-10-20T09:37:53+07:00",
+      "session": null,
+      "result": "skipped",
+      "message": "Dang chay: dnse_live.py (pid 11636) -> hoan de khong xung dot voi AmiBroker",
+      "steps": [],
+      "published": false,
+      "published_at": null
+    },
+    {
       "run_id": "c071bd4d2277",
       "kind": "daily",
       "started_at": "2026-10-19T21:45:27+07:00",
@@ -534,16 +546,16 @@
     "kind": "daily"
   },
   "last_run": {
-    "run_id": "c071bd4d2277",
+    "run_id": "b68ecffd8292",
     "kind": "daily",
-    "started_at": "2026-10-19T21:45:27+07:00",
-    "finished_at": "2026-10-19T21:53:59+07:00",
-    "session": "2026-10-19",
-    "result": "success",
-    "message": "6 chien luoc ok, 0 loi"
+    "started_at": "2026-10-20T09:37:53+07:00",
+    "finished_at": "2026-10-20T09:37:53+07:00",
+    "session": null,
+    "result": "skipped",
+    "message": "Dang chay: dnse_live.py (pid 11636) -> hoan de khong xung dot voi AmiBroker"
   },
   "last_publication": {
-    "at": "2026-10-19T21:53:59+07:00",
+    "at": "2026-10-20T15:38:10+07:00",
     "session": "2026-10-19"
   }
 }
