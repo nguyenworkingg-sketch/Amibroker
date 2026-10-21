@@ -49,5 +49,5 @@ Exporter **không ghi** vào database AmiBroker (chỉ Scan/Explore/Export).
 ## Lịch
 
 * `scheduler\install_task.ps1` → “AmiBroker VN - Exploration Hub” 08:30 thứ 2–6 (dùng dữ liệu EOD phiên đã hoàn tất gần nhất).
-* `D:\AmiBroker_VN\TuDong_CapNhat.bat` (18:00) gọi thêm `scheduler\HubChay.bat` sau khi chốt số liệu thành công → web có kết quả ngay tối đó. Lần 08:30 hôm sau thấy dữ liệu không đổi thì không commit.
+* `D:\AmiBroker_VN\TuDong_CapNhat.bat` (**16:00**, trước giờ tắt máy) chốt số liệu; nếu nguồn chưa có phiên hôm nay thì thử lại mỗi 15 phút, tối đa 4 lần (đến khoảng 17:00); sau đó gọi `scheduler\HubChay.bat` → web và tin Telegram có trong khoảng 16:15–17:15. Máy tắt lúc 16:00 → lịch tự chạy bù khi mở máy, các phương pháp tính theo phiên được bù lúc 15:15 (RS / High Beta mất phiên đó). Lần 08:30 hôm sau thấy dữ liệu không đổi thì không commit.
 * Mốc thời gian được tách bạch: **phiên giao dịch** (`session`), **dữ liệu đến** (`data_asof`), **lúc chạy Exploration** (`generated_at`), **lúc xuất bản** (`status.last_publication.at`).

@@ -93,5 +93,5 @@ So với **phiên có dữ liệu liền trước của cùng phương pháp** (
 
 ## Thông báo Telegram
 
-* **Một tin duy nhất mỗi phiên**, gửi sau khi Hub chạy xong (lịch 18:00, hoặc lịch chạy bù): Top RS (mới vào / rời top), rồi từng phương pháp trong `settings.notify.strategies` (mặc định VCP, Wyckoff) gồm mã mới vào, mã đang đạt (ngày vào · giá vào → hiện tại · % từ khi vào / VN-Index, tối đa 15 mã mới nhất) và mã không còn đạt (% trong thời gian đạt).
+* **Một tin duy nhất mỗi phiên**, gửi sau khi Hub chạy xong (lịch 16:00, hoặc lịch chạy bù): Top RS (mới vào / rời top), rồi từng phương pháp trong `settings.notify.strategies` (mặc định VCP, Wyckoff) chỉ gồm **mã vào / mã ra** (mỗi phần 1 dòng) và link dashboard; ngày vào, giá vào, % từ khi vào xem trên website.
 * Chỉ tính mã GTGD20 ≥ `notify.min_liquidity_bil` (2 tỷ). Token bot trong `D:\AmiBroker_VN\config	elegram.ini` (ngoài repo). Cảnh báo trong phiên: `intraday = 1` trong file đó (mặc định tắt theo yêu cầu).

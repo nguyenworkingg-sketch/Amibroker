@@ -62,7 +62,7 @@ powershell -ExecutionPolicy Bypass -File scheduler\install_task.ps1
 
 Tạo task **“AmiBroker VN - Exploration Hub”** 08:30 thứ 2–6, chạy `scheduler\HubChay.bat` (= `run_explorations.py --publish --wait-minutes 30`). Đổi giờ: thêm `-Time 09:00`.
 
-Khuyến nghị thêm vào cuối `D:\AmiBroker_VN\TuDong_CapNhat.bat` (lịch 18:00) để web có kết quả ngay tối đó:
+Khuyến nghị thêm vào cuối `D:\AmiBroker_VN\TuDong_CapNhat.bat` (lịch 16:00) để web có kết quả ngay chiều đó:
 
 ```bat
 if not errorlevel 1 call "D:\AmiBroker_Hub\scheduler\HubChay.bat" >> "%~dp0logs\capnhat_%D%.log" 2>&1

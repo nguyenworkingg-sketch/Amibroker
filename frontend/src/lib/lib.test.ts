@@ -17,7 +17,7 @@ function rec(p: Partial<SignalRecord>): SignalRecord {
 }
 
 describe('freshness (lich phien thu 2-6, gio VN)', () => {
-  it('truoc 18:30 thi phien du kien la phien hom truoc', () => {
+  it('truoc 17:30 thi phien du kien la phien hom truoc', () => {
     // Thu 2 19/10/2026 10:00 gio VN = 03:00 UTC
     expect(expectedSession(new Date('2026-10-19T03:00:00Z'))).toBe('2026-10-16')
     // Thu 2 19:00 gio VN
