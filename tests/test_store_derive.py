@@ -63,6 +63,29 @@ class StatusTests(unittest.TestCase):
         self.assertEqual(s3["records"]["CCC"]["streak"], 3)
         self.assertEqual(s1["compared_to"], D[0].isoformat())
 
+    def test_entry_price_and_return_since_entry(self):
+        cfg, _ = temp_config()
+        px = {D[0]: 10.0, D[1]: 11.0, D[2]: 12.0, D[3]: 9.0}
+        snaps = {"VCP": {}}
+        for i, tk in enumerate([["AAA"], ["AAA", "BBB"], ["BBB"], ["AAA"]]):
+            s = snap(cfg, "VCP", D[i], tk)
+            for r in s["records"]:
+                r["close"] = px[D[i]]
+            snaps["VCP"][D[i].isoformat()] = s
+        bench = {D[0].isoformat(): 100.0, D[1].isoformat(): 101.0, D[2].isoformat(): 102.0, D[3].isoformat(): 99.0}
+        st = compute_statuses(snaps, bench=bench)["VCP"]
+        b2 = st[D[2].isoformat()]["records"]["BBB"]      # BBB vao D1 gia 11 -> D2 gia 12
+        self.assertEqual(b2["entry_price"], 11.0)
+        self.assertAlmostEqual(b2["ret_since_entry"], 9.09, places=2)
+        self.assertAlmostEqual(b2["vni_since_entry"], 0.99, places=2)
+        self.assertFalse(b2["entry_censored"])
+        self.assertTrue(st[D[0].isoformat()]["records"]["AAA"]["entry_censored"])   # phien dau: chua biet ngay vao that
+        a3 = st[D[3].isoformat()]["records"]["AAA"]      # AAA quay lai D3 -> gia vao moi = 9
+        self.assertEqual(a3["entry_price"], 9.0)
+        self.assertEqual(a3["ret_since_entry"], 0.0)
+        drop = st[D[2].isoformat()]["dropped"][0]          # AAA roi o D2: vao D0 gia 10, phien cuoi D1 gia 11
+        self.assertEqual((drop["ticker"], drop["entry_price"], drop["last_price"], drop["ret_pct"]), ("AAA", 10.0, 11.0, 10.0))
+
     def test_signal_identity_is_per_strategy(self):
         cfg, _ = temp_config()
         snaps = {"VCP": {D[0].isoformat(): snap(cfg, "VCP", D[0], ["AAA"]), D[1].isoformat(): snap(cfg, "VCP", D[1], ["AAA"])},

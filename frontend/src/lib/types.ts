@@ -69,6 +69,11 @@ export interface SignalRecord {
   n_strategies: number
   strategies: string[]
   multi_streak: number
+  entry_price?: number | null
+  entry_censored?: boolean
+  ret_since_entry?: number | null
+  vni_since_entry?: number | null
+  excess_since_entry?: number | null
 }
 
 export interface DroppedRecord {
@@ -84,6 +89,11 @@ export interface DroppedRecord {
   name: string | null
   exchange: string | null
   sector: string | null
+  entry_price?: number | null
+  last_price?: number | null
+  entry_censored?: boolean
+  ret_pct?: number | null
+  vni_ret_pct?: number | null
 }
 
 export interface StrategySessionInfo {
