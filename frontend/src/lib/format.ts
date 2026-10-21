@@ -65,4 +65,6 @@ export const ORIGIN_LABEL: Record<string, string> = {
   backfill: 'Tái tạo lịch sử',
   manual: 'Nhập tay',
   demo: 'Mô phỏng',
+  daily: 'Hằng ngày',
+  catchup: 'Chạy bù',
 }

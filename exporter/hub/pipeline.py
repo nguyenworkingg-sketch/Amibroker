@@ -212,8 +212,12 @@ def _job(cfg: Config, strat: Strategy | dict, out: Path, rng: tuple[dt.date, dt.
 
 
 def run_amibroker(cfg: Config, market, *, strategy_ids: list[str] | None = None, backfill: tuple[dt.date, dt.date] | None = None,
-                  allow_empty: bool = False, with_sectors: bool = True, check_conflicts: bool = True) -> dict:
-    kind = "backfill" if backfill else "daily"
+                  allow_empty: bool = False, with_sectors: bool = True, check_conflicts: bool = True,
+                  catchup: bool = False) -> dict:
+    """catchup=True: chay bu phien EOD khi AmiBroker DA co nen trong phien hom nay (vd 15:15 sau khi bo cap nhat
+    DNSE dung, lich 18:00 hom truoc bi lo): chi chay chien luoc tinh theo phien (supports_backfill) cho dung phien EOD,
+    ghi nguon 'backfill'; RS / High Beta (chi tinh phien cuoi) bi bo qua co ghi ro."""
+    kind = "backfill" if backfill else ("catchup" if catchup else "daily")
     rr = RunRecorder(cfg, kind)
     try:
         with run_lock(cfg):
@@ -230,13 +234,20 @@ def run_amibroker(cfg: Config, market, *, strategy_ids: list[str] | None = None,
             sec_sym = ab.get("sector_check_symbol")
             pr = amibroker.probe(ab["database"], bench, raw_dir, check_symbols=[sec_sym] if sec_sym else [])
             rr.step("probe", "ok", message=f"database {pr['database']}, nen cuoi {pr['last_bar']}")
-            note, sectors_ok = verify_probe(pr, session, market, bench, sec_sym, bool(backfill))
+            note, sectors_ok = verify_probe(pr, session, market, bench, sec_sym, bool(backfill) or catchup)
+            intraday = (pr.get("last_bar") or "") > session.isoformat()   # AmiBroker co nen sau phien EOD
             if note:
                 rr.step("probe", "ok", message=note)
             market = export_prices(cfg, session, raw_dir, rr)
             strategies = [s for s in cfg.enabled() if not strategy_ids or s.id in strategy_ids]
             if backfill:
                 strategies = [s for s in strategies if s.supports_backfill]
+            elif catchup and intraday:
+                for s in [x for x in strategies if not x.supports_backfill]:
+                    rr.step(s.id, "skipped", strategy=s.id, session=session.isoformat(),
+                            message=f"Chi tinh duoc phien cuoi; AmiBroker dang co nen {pr.get('last_bar')} -> khong chay bu phien {session}")
+                strategies = [s for s in strategies if s.supports_backfill]
+            origin = "backfill" if (backfill or (catchup and intraday)) else "live"
             timeout = int(ab.get("timeout_seconds", 1200))
             ok = fail = 0
             sector_dep = set(ab.get("sector_dependent", []))
@@ -265,7 +276,7 @@ def run_amibroker(cfg: Config, market, *, strategy_ids: list[str] | None = None,
                     rr.step(s.id, "error", strategy=s.id, session=session.isoformat(), message=err)
                     fail += 1
                     continue
-                n = ingest_file(cfg, s, out, market, session, origin=kind if backfill else "live", rr=rr,
+                n = ingest_file(cfg, s, out, market, session, origin=origin, rr=rr,
                                 allow_empty=allow_empty or bool(backfill), backfill=backfill, seconds=round(time.time() - t0, 1))
                 ok += n > 0
                 fail += n == 0
@@ -276,7 +287,7 @@ def run_amibroker(cfg: Config, market, *, strategy_ids: list[str] | None = None,
                 out = raw_dir / f"_SECTORS_{kind}_{now_vn().strftime('%H%M%S')}.csv"
                 try:
                     amibroker.run_job(_job(cfg, aux, out, backfill or (session, session)), timeout)
-                    n = ingest_sectors(cfg, out, kind if backfill else "live")
+                    n = ingest_sectors(cfg, out, origin)
                     rr.step("_SECTORS", "ok", message=f"{n} phien nganh")
                 except Exception as e:  # nganh la phu tro, khong lam hong ca lan chay
                     rr.step("_SECTORS", "error", message=str(e))
