@@ -1,1 +1,1 @@
-{"ticker":"SCL","name":"Song Da Cao Cuong","exchange":"UPCoM","sector":"Xây dựng","timeline":[{"date":"2026-10-19","s":{"HIGH_BETA":[78.6,3,"UNKNOWN",null]}}],"rs":[["2026-10-19",97.7]],"close":[["2026-10-19",30.3]],"episodes":[]}
+{"ticker":"SCL","name":"Song Da Cao Cuong","exchange":"UPCoM","sector":"Xây dựng","timeline":[{"date":"2026-10-19","s":{"HIGH_BETA":[78.6,3,"UNKNOWN",null]}},{"date":"2026-10-21","s":{"HIGH_BETA":[76.5,4,"CONTINUING","96"]}}],"rs":[["2026-10-19",97.7],["2026-10-21",95.4]],"close":[["2026-10-19",30.3],["2026-10-21",31.0]],"episodes":[]}
