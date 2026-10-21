@@ -36,7 +36,7 @@ class NotifyTests(unittest.TestCase):
         self.assertIn("CCC", text)          # roi top hom nay
         self.assertNotIn("DDD", text)       # roi top phien truoc -> khong bao lai
         self.assertNotIn("BBB", text)       # khong phai moi vao
-        self.assertIn("mất thanh khoản", text)
+        self.assertLess(len(text), 600)          # tin gon: chi ma vao / ma ra
         self.assertNotIn(" < ", text)          # "<" tran phai escape, Telegram HTML tu choi
         self.assertIsNone(notify.eod_toprs(self.cfg, DOC, tg))   # chay lai cung phien -> khong gui trung
         self.assertEqual(len(tg.sent), 1)
