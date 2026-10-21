@@ -37,6 +37,7 @@ class NotifyTests(unittest.TestCase):
         self.assertNotIn("DDD", text)       # roi top phien truoc -> khong bao lai
         self.assertNotIn("BBB", text)       # khong phai moi vao
         self.assertIn("mất thanh khoản", text)
+        self.assertNotIn(" < ", text)          # "<" tran phai escape, Telegram HTML tu choi
         self.assertIsNone(notify.eod_toprs(self.cfg, DOC, tg))   # chay lai cung phien -> khong gui trung
         self.assertEqual(len(tg.sent), 1)
 
@@ -50,6 +51,7 @@ class NotifyTests(unittest.TestCase):
         text = notify.intraday_alerts(self.cfg, e2, x, "10:30", tg)
         self.assertIn("EEE", text)
         self.assertNotIn("AAA", text)
+        self.assertNotIn("(< ", text)
         self.assertEqual(len(tg.sent), 2)
 
 
