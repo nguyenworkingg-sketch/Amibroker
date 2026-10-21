@@ -123,7 +123,7 @@ def eod_toprs(cfg: Config, doc: dict, tg: Telegram | None = None, dry_run: bool 
     d = "/".join(reversed(day.split("-")))
     parts = [f"<b>Top RS — phiên {d}</b> (chốt cuối ngày)",
              f"Trong top: <b>{s['in_top']}</b> mã · rổ {s['universe']} mã GTGD20 ≥ {rule['min_value_bil']:.0f} tỷ · "
-             f"vào ≥ {rule['enter']:.0f}, rời < {rule['exit']:.0f}"]
+             f"vào ≥ {rule['enter']:.0f}, rời &lt; {rule['exit']:.0f}"]
     parts.append(f"\n🟢 <b>Mới vào ({len(new)})</b>" + ("\n" + "\n".join(_line_enter(r) for r in new) if new else ": không có"))
     parts.append(f"\n🔴 <b>Rời top ({len(exits)})</b>" + ("\n" + "\n".join(_line_exit(r) for r in exits) if exits else ": không có"))
     if s.get("median_ret_pct") is not None:
@@ -155,7 +155,7 @@ def intraday_alerts(cfg: Config, enters: list[dict], exits: list[dict], asof: st
         parts.append("🟢 <b>Sắp vào top</b>\n" + "\n".join(_line_enter(r) for r in new_e))
     if new_x:
         parts.append("🔴 <b>Có thể rời top</b>\n" + "\n".join(
-            f'• <b>{html.escape(r["ticker"])}</b> — SM trung hạn ước tính <b>{_fmt_int(r.get("sm_mid"))}</b> (< {_fmt_int(r.get("exit"))}), giá {_fmt_px(r.get("price"))}'
+            f'• <b>{html.escape(r["ticker"])}</b> — SM trung hạn ước tính <b>{_fmt_int(r.get("sm_mid"))}</b> (&lt; {_fmt_int(r.get("exit"))}), giá {_fmt_px(r.get("price"))}'
             for r in new_x))
     text = "\n\n".join(parts)
     if dry_run:
