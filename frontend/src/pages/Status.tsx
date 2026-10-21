@@ -13,7 +13,7 @@ const RESULT: Record<string, { label: string; cls: string }> = {
 }
 const STEP: Record<string, string> = {
   created: 'Đã ghi', unchanged: 'Không đổi', replaced: 'Cập nhật', invalid: 'File không hợp lệ', error: 'Lỗi', timeout: 'Quá thời gian',
-  empty_suspicious: 'Rỗng bất thường — giữ dữ liệu cũ', ok: 'OK',
+  empty_suspicious: 'Rỗng bất thường — giữ dữ liệu cũ', ok: 'OK', skipped: 'Bỏ qua',
 }
 
 export default function Status({ meta, status }: PageProps) {

@@ -15,7 +15,12 @@ from hub.market import frames_from_records  # noqa: E402
 
 def temp_config():
     d = Path(tempfile.mkdtemp(prefix="hubtest_"))
-    return load_config(data_dir=d / "data", archive_dir=d / "archive"), d
+    cfg = load_config(data_dir=d / "data", archive_dir=d / "archive")
+    # KHONG BAO GIO ghi / doc file that tren may khi kiem thu (20/10/2026: test da ghi de danh sach ro Top RS)
+    cfg.settings.setdefault("top_rs", {})["live_watchlist_file"] = str(d / "live_watchlist_toprs.txt")
+    cfg.settings.setdefault("notify", {})["telegram_config"] = str(d / "telegram_khong_co.ini")
+    cfg.settings["notify"]["import_dir_live"] = str(d / "import")
+    return cfg, d
 
 
 def weekdays(start: dt.date, n: int) -> list[dt.date]:

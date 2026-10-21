@@ -69,6 +69,14 @@ def main() -> int:
         log.info("Canh bao trong phien: chuoi gia (%s) / Top RS (%s) khong khop hoac da co phien hom nay -> bo qua",
                  market.last_session(), doc["session"])
         return 0
+    # du lieu chot phai la phien lien truoc hom nay (thu 2-6); cu hon -> uoc tinh se lech phien -> khong bao
+    prev = now.date() - dt.timedelta(days=1)
+    while prev.weekday() >= 5:
+        prev -= dt.timedelta(days=1)
+    if market.last_session() < prev:
+        log.info("Canh bao trong phien: du lieu chot moi den %s (can %s, co the nghi le / CapNhat chua chay) -> bo qua",
+                 market.last_session(), prev)
+        return 0
     live, bench, mt = read_live(Path(cfg.settings.get("notify", {}).get("import_dir_live", r"D:\AmiBroker_VN\import")), now.date())
     if bench is None or not live:
         log.info("Canh bao trong phien: chua co gia tam hom nay")

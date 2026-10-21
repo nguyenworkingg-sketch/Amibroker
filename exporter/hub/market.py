@@ -48,9 +48,25 @@ class MarketData:
     def load_best(cls, cfg: Config) -> "MarketData":
         """Uu tien chuoi gia xuat tu AmiBroker (archive/prices, day du); neu khong co thi doc file EOD import."""
         p = cls.latest_cache(cfg)
-        if p is not None:
-            return cls.from_prices_csv(cfg, p)
-        return cls.load(cfg)
+        if p is None:
+            return cls.load(cfg)
+        m = cls.from_prices_csv(cfg, p)
+        # Ghep cac phien EOD MOI HON da chot trong import\*.csv (CapNhat.bat) -> khong can mo AmiBroker
+        try:
+            eod = cls.load(cfg)
+        except (OSError, KeyError, ValueError):
+            return m
+        newer = eod.calendar[eod.calendar > m.calendar[-1]]
+        if len(newer) == 0:
+            return m
+        def cat(a: pd.DataFrame, b: pd.DataFrame) -> pd.DataFrame:
+            return pd.concat([a, b.reindex(newer)]).sort_index()
+        merged = cls(cat(m.open, eod.open), cat(m.close, eod.close), cat(m.volume, eod.volume),
+                     pd.concat([m.bench_open, eod.bench_open.reindex(newer)]),
+                     pd.concat([m.bench_close, eod.bench_close.reindex(newer)]),
+                     {**m.exchange, **{t: e for t, e in eod.exchange.items() if t not in m.exchange}}, m.names, m.sectors)
+        merged.source = f"{m.source} + EOD import {newer[0].date()}..{newer[-1].date()}"
+        return merged
 
     @classmethod
     def from_prices_csv(cls, cfg: Config, path: Path) -> "MarketData":

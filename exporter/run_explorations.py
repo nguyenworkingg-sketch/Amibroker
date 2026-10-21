@@ -34,6 +34,8 @@ def main() -> int:
     ap.add_argument("--publish", action="store_true", help="Commit + push thu muc data/ len GitHub khi thanh cong")
     ap.add_argument("--wait-minutes", type=int, default=0, help="Neu AmiBroker dang ban, cho toi da N phut roi thu lai")
     ap.add_argument("--no-sectors", action="store_true")
+    ap.add_argument("--catchup", action="store_true",
+                    help="Chay bu: chi chay neu phien EOD moi nhat chua co tren web; chap nhan AmiBroker dang co nen trong phien")
     a = ap.parse_args()
 
     cfg = load_config()
@@ -45,6 +47,16 @@ def main() -> int:
 
     log.info("Nap du lieu EOD ...")
     market = MarketData.load(cfg)
+    if a.catchup:
+        from hub.util import read_json
+        meta = read_json(cfg.data_dir / "meta.json", {})
+        done = {s["id"]: s.get("last_session") for s in meta.get("strategies", [])}
+        sess = market.last_session().isoformat()
+        missing = [s.id for s in cfg.enabled() if s.supports_backfill and (done.get(s.id) or "") < sess]
+        if not missing:
+            log.info("Chay bu: phien %s da co tren web -> khong can chay", sess)
+            return 0
+        log.info("Chay bu phien %s cho: %s", sess, ", ".join(missing))
     log.info("Lich phien: %d phien, phien cuoi %s, %d ma", len(market.calendar), market.last_session(), market.close.shape[1])
     ids = [x.strip().upper() for x in a.strategies.split(",")] if a.strategies else None
     rng = None
@@ -52,7 +64,8 @@ def main() -> int:
         ss = market.sessions()
         rng = (ss[-min(a.backfill, len(ss))], ss[-1])
         log.info("Tai tao lich su %s .. %s", *rng)
-    rec = run_amibroker(cfg, market, strategy_ids=ids, backfill=rng, allow_empty=a.allow_empty, with_sectors=not a.no_sectors)
+    rec = run_amibroker(cfg, market, strategy_ids=ids, backfill=rng, allow_empty=a.allow_empty, with_sectors=not a.no_sectors,
+                        catchup=a.catchup)
     log.info("KET QUA: %s - %s", rec["result"], rec["message"])
     for s in rec["steps"]:
         log.info("  %-10s %-16s %s", s["name"], s["status"], s.get("message") or "")
