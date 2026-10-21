@@ -34,14 +34,22 @@ def _load_all(cfg: Config) -> tuple[dict[str, dict[str, dict]], dict[str, dict]]
     return snaps, sectors
 
 
-def compute_statuses(snaps: dict[str, dict[str, dict]], gap_fn=None) -> dict[str, dict[str, dict]]:
-    """-> st[sid][session] = {compared_to, gap, records{ticker: rec+status}, dropped[...]}"""
+def _pct(a, b):
+    return None if a is None or b is None or not b else round((a / b - 1) * 100, 2)
+
+
+def compute_statuses(snaps: dict[str, dict[str, dict]], gap_fn=None, bench: dict[str, float] | None = None) -> dict[str, dict[str, dict]]:
+    """-> st[sid][session] = {compared_to, gap, records{ticker: rec+status}, dropped[...]}
+    Moi dot tin hieu ghi GIA VAO = gia dong cua phien bat dau dot (episode_start) -> % tu khi vao den phien hien tai,
+    VN-Index cung ky (bench = {phien: gia dong cua VNINDEX})."""
     out: dict[str, dict[str, dict]] = {}
     for sid, by_s in snaps.items():
         sess = sorted(by_s)
         ever: set[str] = set()
         streak: dict[str, int] = {}
         start: dict[str, str] = {}
+        entry_px: dict[str, float | None] = {}
+        censored: dict[str, bool] = {}
         first: dict[str, str] = {}
         prev_recs: dict[str, dict] = {}
         out[sid] = {}
@@ -62,12 +70,18 @@ def compute_statuses(snaps: dict[str, dict[str, dict]], gap_fn=None) -> dict[str
                 streak[t] = streak.get(t, 0) + 1 if t in prev_recs else 1
                 if t not in prev_recs:
                     start[t] = s
+                    entry_px[t] = r.get("close")
+                    censored[t] = prev_s is None  # dot da co tu truoc phien dau tien ghi nhan
                 first.setdefault(t, s)
                 pr = prev_recs.get(t, {}).get("strategy_rank")
                 rr = r.get("strategy_rank")
                 r.update({"signal_status": stt, "previous_rank": pr,
                           "rank_change": (pr - rr) if (pr is not None and rr is not None) else None,
-                          "streak": streak[t], "episode_start": start[t], "first_seen": first[t]})
+                          "streak": streak[t], "episode_start": start[t], "first_seen": first[t],
+                          "entry_price": entry_px.get(t), "entry_censored": censored.get(t, False), "ret_since_entry": _pct(r.get("close"), entry_px.get(t)),
+                          "vni_since_entry": _pct((bench or {}).get(s), (bench or {}).get(start[t])) if bench else None})
+                r["excess_since_entry"] = (None if r["ret_since_entry"] is None or r["vni_since_entry"] is None
+                                           else round(r["ret_since_entry"] - r["vni_since_entry"], 2))
                 recs[t] = r
             dropped = []
             if prev_s is not None:
@@ -76,7 +90,11 @@ def compute_statuses(snaps: dict[str, dict[str, dict]], gap_fn=None) -> dict[str
                         dropped.append({"ticker": t, "strategy_id": sid, "signal_status": "DROPPED", "last_signal_date": prev_s,
                                         "previous_rank": r.get("strategy_rank"), "strategy_score": r.get("strategy_score"),
                                         "state": r.get("state"), "streak": r.get("streak"), "episode_start": r.get("episode_start"),
-                                        "name": r.get("name"), "exchange": r.get("exchange"), "sector": r.get("sector")})
+                                        "name": r.get("name"), "exchange": r.get("exchange"), "sector": r.get("sector"),
+                                        "entry_price": r.get("entry_price"), "last_price": r.get("close"),
+                                        "entry_censored": r.get("entry_censored", False),
+                                        "ret_pct": r.get("ret_since_entry"), "vni_ret_pct": r.get("vni_since_entry"),
+                                        "avg_trading_value_20": r.get("avg_trading_value_20")})
                         streak.pop(t, None)
             gap = gap_fn(prev_s, s) if (gap_fn and prev_s) else None
             out[sid][s] = {"compared_to": prev_s, "gap": gap, "records": recs,
@@ -112,7 +130,8 @@ def build_site(cfg: Config, market=None, *, build_time: str | None = None, demo:
                          "de tranh xoa do rong thi truong / hieu suat sau tin hieu. Chay run_explorations.py de lay gia tu AmiBroker.")
     snaps, sectors = _load_all(cfg)
     gap_fn = (lambda a, b: market.session_gap(dt.date.fromisoformat(a), dt.date.fromisoformat(b))) if market else None
-    st = compute_statuses(snaps, gap_fn)
+    bench = ({d.isoformat(): float(v) for d, v in zip(market.sessions(), market.bench_close.to_numpy())} if market is not None else None)
+    st = compute_statuses(snaps, gap_fn, bench)
     all_sessions = sorted({s for by in snaps.values() for s in by})
     written = 0
 

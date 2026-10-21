@@ -60,9 +60,15 @@ export function signalColumns(meta: StrategyMeta[], single: StrategyMeta | null)
     textCol('strategy', 'Phương pháp', (r) => r.strategy_id, (r) => <span title={names[r.strategy_id]}><StrategyChip id={r.strategy_id} /></span>),
     textCol('status', 'Tín hiệu', (r) => r.signal_status, (r) => <StatusBadge s={r.signal_status} />),
     textCol('state', 'Trạng thái', (r) => r.state),
-    textCol('start', 'Bắt đầu', (r) => r.episode_start, (r) => <span className="num">{dateVN(r.episode_start)}</span>),
+    textCol('start', 'Ngày vào', (r) => r.episode_start, (r) => (
+      <span className="num" title={r.entry_censored ? 'Đã đạt từ trước phiên đầu tiên được ghi nhận' : ''}>{r.entry_censored ? '≤ ' : ''}{dateVN(r.episode_start)}</span>
+    )),
     numCol('streak', 'Số phiên', (r) => r.streak, (v) => num(v, 0), 'Số phiên liên tiếp đạt của đợt tín hiệu hiện tại'),
+    numCol('entry', 'Giá vào', (r) => r.entry_price, (v) => price(v), 'Giá đóng cửa phiên bắt đầu đợt tín hiệu (nghìn đồng, đã điều chỉnh)'),
     numCol('close', 'Giá', (r) => r.close, (v) => price(v), 'Giá đóng cửa (nghìn đồng)'),
+    numCol('rse', '% từ khi vào', (r) => r.ret_since_entry, (v) => <span className={signClass(v)}>{pct(v, 1)}</span>, 'Giá hiện tại so với giá vào'),
+    numCol('vse', 'VNI cùng kỳ', (r) => r.vni_since_entry, (v) => <span className={signClass(v)}>{pct(v, 1)}</span>),
+    numCol('xse', 'Vượt VNI', (r) => r.excess_since_entry, (v) => <span className={signClass(v)}>{pct(v, 1)}</span>, '% từ khi vào trừ VN-Index cùng kỳ'),
     numCol('r1', '% 1P', (r) => r.ret_1d, (v) => <span className={signClass(v)}>{pct(v, 1)}</span>),
     numCol('r5', '% 5P', (r) => r.ret_5d, (v) => <span className={signClass(v)}>{pct(v, 1)}</span>),
     numCol('r20', '% 20P', (r) => r.ret_20d, (v) => <span className={signClass(v)}>{pct(v, 1)}</span>),
@@ -94,7 +100,10 @@ export function csvForSignals(rows: SignalRecord[], single: StrategyMeta | null)
     { header: 'Phien', value: (r) => r.signal_date },
     { header: 'TrangThaiTinHieu', value: (r) => STATUS_LABEL[r.signal_status] },
     { header: 'TrangThai', value: (r) => r.state },
-    { header: 'BatDau', value: (r) => r.episode_start },
+    { header: 'NgayVao', value: (r) => (r.entry_censored ? `<=${r.episode_start}` : r.episode_start) },
+    { header: 'GiaVao', value: (r) => r.entry_price },
+    { header: 'TuKhiVaoPct', value: (r) => r.ret_since_entry },
+    { header: 'VNICungKyPct', value: (r) => r.vni_since_entry },
     { header: 'SoPhien', value: (r) => r.streak },
     { header: 'Gia', value: (r) => r.close },
     { header: 'Ret1Pct', value: (r) => r.ret_1d },
@@ -207,7 +216,7 @@ export default function Exploration({ meta, route }: PageProps & { route: Route 
             columns={columns}
             rowKey={(r) => `${r.strategy_id}:${r.ticker}`}
             initialSort={f.strategy === 'ALL' ? [{ id: 'nstrat', desc: true }, { id: 'score', desc: true }] : [{ id: 'rank', desc: true }]}
-            hiddenByDefault={['name', 'prank', 'r1']}
+            hiddenByDefault={['name', 'prank', 'r1', 'vse', 'r5']}
             toolbar={
               <>
                 <input
@@ -258,6 +267,10 @@ export default function Exploration({ meta, route }: PageProps & { route: Route 
                   textCol('state', 'Trạng thái cuối', (r) => r.state),
                   numCol('score', 'Điểm cuối', (r) => r.strategy_score, (v) => num(v, 1)),
                   numCol('prank', 'Hạng cuối', (r) => r.previous_rank, (v) => num(v, 0)),
+                  numCol('ep', 'Giá vào', (r) => r.entry_price, (v) => price(v)),
+                  numCol('lp', 'Giá phiên cuối đạt', (r) => r.last_price, (v) => price(v)),
+                  numCol('rp', '% khi còn đạt', (r) => r.ret_pct, (v) => <span className={signClass(v)}>{pct(v, 1)}</span>, 'Từ giá vào tới giá phiên cuối còn đạt'),
+                  numCol('vp', 'VNI cùng kỳ', (r) => r.vni_ret_pct, (v) => <span className={signClass(v)}>{pct(v, 1)}</span>),
                 ]}
               />
             </div>

@@ -49,7 +49,7 @@ Bản ghi gốc của một phương pháp tại một phiên. Đây là nguồn
 | `meta.json` | Danh mục phương pháp (+ trạng thái kết nối, phiên gần nhất), danh sách phiên, cờ `demo` |
 | `status.json` | Nhật ký 60 lần chạy, trạng thái từng phương pháp, `last_success`, `last_publication` |
 | `latest/summary.json` | Thống kê từng phiên: số mã, mới, tiếp diễn, quay lại, không còn đạt, ≥2, ≥3, theo phương pháp |
-| `sessions/<date>.json` | Toàn bộ bản ghi của phiên (đã gắn `signal_status`, `previous_rank`, `rank_change`, `streak`, `episode_start`, `first_seen`, `n_strategies`, `strategies`, `multi_streak`) + `dropped` + `benchmark` |
+| `sessions/<date>.json` | Toàn bộ bản ghi của phiên (đã gắn `signal_status`, `previous_rank`, `rank_change`, `streak`, `episode_start`, `first_seen`, `n_strategies`, `strategies`, `multi_streak`, `entry_price` = giá đóng cửa phiên bắt đầu đợt tín hiệu, `ret_since_entry` / `vni_since_entry` / `excess_since_entry` = % từ khi vào, `entry_censored` = đợt đã có từ trước phiên đầu tiên ghi nhận) + `dropped` + `benchmark` |
 | `history/index.json` | Bảng (cột + dòng) theo (phương pháp, mã): lần đầu, gần nhất, số phiên, chuỗi hiện tại, số lần quay lại |
 | `tickers/<T>.json` | Dòng thời gian từng mã: `[điểm, hạng, trạng thái, nhãn]` theo phương pháp, RS, giá; các đợt tín hiệu + hiệu suất sau tín hiệu |
 | `market/breadth.json` | % mã trên MA20/50/200, tăng/giảm, đỉnh 52 tuần — ALL/HOSE/HNX/UPCoM |
@@ -90,3 +90,8 @@ So với **phiên có dữ liệu liền trước của cùng phương pháp** (
 * Vào top khi SM trung hạn ≥ `enter` (90); rời khi < `exit` (80), hoặc khi không được xếp hạng quá 10 phiên liên tiếp (`exit_reason = illiquid`).
 * `entry_censored = true`: mã đã ở top từ trước ngày bắt đầu theo dõi (`tracking_since`), nên giá vào không phải giá vào thật và không tính vào `summary`.
 * Tính lại toàn bộ mỗi lần từ chuỗi giá AmiBroker (giá đã điều chỉnh), không dùng dữ liệu sau từng phiên. Phân ngành: `exporter/reference/icb_sectors.csv` (ICB cấp 4 của VNDirect, cập nhật bằng `python exporteretch_icb.py`).
+
+## Thông báo Telegram
+
+* **Một tin duy nhất mỗi phiên**, gửi sau khi Hub chạy xong (lịch 18:00, hoặc lịch chạy bù): Top RS (mới vào / rời top), rồi từng phương pháp trong `settings.notify.strategies` (mặc định VCP, Wyckoff) gồm mã mới vào, mã đang đạt (ngày vào · giá vào → hiện tại · % từ khi vào / VN-Index, tối đa 15 mã mới nhất) và mã không còn đạt (% trong thời gian đạt).
+* Chỉ tính mã GTGD20 ≥ `notify.min_liquidity_bil` (2 tỷ). Token bot trong `D:\AmiBroker_VN\config	elegram.ini` (ngoài repo). Cảnh báo trong phiên: `intraday = 1` trong file đó (mặc định tắt theo yêu cầu).

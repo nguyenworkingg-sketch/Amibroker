@@ -47,6 +47,9 @@ settings:
     # file cau hinh Telegram (CHUA TOKEN - nam ngoai repo)
     telegram_config: D:\AmiBroker_VN\config\telegram.ini
     import_dir_live: D:\AmiBroker_VN\import
+    # TIN CUOI NGAY (1 lan / phien): Top RS + cac phuong phap nay (ma moi vao / khong con dat, gia vao, % tu khi vao)
+    strategies: [VCP, WYCKOFF]
+    min_liquidity_bil: 2.0
   publish:
     remote: origin
     branch: main
