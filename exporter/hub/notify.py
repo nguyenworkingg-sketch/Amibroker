@@ -102,63 +102,33 @@ def _line_enter(r: dict) -> str:
             f' · giá {_fmt_px(r.get("price"))}')
 
 
-def _line_exit(r: dict) -> str:
-    t = html.escape(r["ticker"])
-    why = "mất thanh khoản" if r.get("exit_reason") == "illiquid" else f"SM {r.get('sm_mid_exit', '—')}"
-    return (f'• <b>{t}</b> ({why}) — ở top {r.get("sessions")} phiên, từ khi vào {_fmt_pct(r.get("ret_pct"))}'
-            f' (VNI {_fmt_pct(r.get("vni_ret_pct"))})')
-
-
 def _d(iso: str | None) -> str:
     return "—" if not iso else "/".join(reversed(iso[:10].split("-")))
 
 
+def _tickers(rows: list[dict]) -> str:
+    return ", ".join(html.escape(r["ticker"]) for r in rows) if rows else "—"
+
+
 def _toprs_section(doc: dict) -> list[str]:
-    s, rule, day = doc["summary"], doc["rule"], doc["session"]
-    new = [r for r in doc["rows"] if r.get("new_today")]
-    exits = [r for r in doc.get("recent_exits", []) if r.get("exit_date") == day]
-    out = [f"<b>📈 TOP RS</b> — trong top <b>{s['in_top']}</b> mã (rổ {s['universe']} mã GTGD20 ≥ {rule['min_value_bil']:.0f} tỷ; "
-           f"vào ≥ {rule['enter']:.0f}, rời &lt; {rule['exit']:.0f})"]
-    out.append(f"🟢 Mới vào ({len(new)})" + ("\n" + "\n".join(_line_enter(r) for r in new) if new else ": không có"))
-    out.append(f"🔴 Rời top ({len(exits)})" + ("\n" + "\n".join(_line_exit(r) for r in exits) if exits else ": không có"))
-    if s.get("median_ret_pct") is not None:
-        out.append(f"Danh sách đang lãi {s['pct_positive']:.0f}% · trung vị từ khi vào {_fmt_pct(s['median_ret_pct'])}")
-    return out
+    """Gon: chi ma vao / ma ra (chi tiet xem tren dashboard)."""
+    day = doc["session"]
+    new = sorted((r for r in doc["rows"] if r.get("new_today")), key=lambda r: r["ticker"])
+    exits = sorted((r for r in doc.get("recent_exits", []) if r.get("exit_date") == day), key=lambda r: r["ticker"])
+    return [f"<b>Top RS</b>  🟢 {_tickers(new)}  🔴 {_tickers(exits)}"]
 
 
 def _strategy_section(sid: str, name: str, sess: dict, min_liq: float) -> list[str]:
-    """Moi phuong phap: ma MOI VAO hom nay va ma ROI hom nay (kem ngay vao, gia vao, % tu khi vao)."""
+    """Gon: ma moi vao / ma khong con dat hom nay (GTGD20 >= min_liq)."""
+    short = name.split(" – ")[0]
     info = (sess.get("strategies") or {}).get(sid) or {}
     if not info.get("available"):
-        return [f"<b>{html.escape(name)}</b>: chưa có dữ liệu phiên này"]
+        return [f"<b>{html.escape(short)}</b>  (chưa có dữ liệu phiên này)"]
     liq = lambda r: r.get("avg_trading_value_20") is not None and r["avg_trading_value_20"] >= min_liq  # noqa: E731
-    recs = [r for r in sess["records"] if r["strategy_id"] == sid and liq(r)]
-    new = sorted([r for r in recs if r["signal_status"] in ("NEW", "RETURNING")],
-                 key=lambda r: -(r.get("strategy_score") or 0))
-    drop = [r for r in sess.get("dropped", []) if r["strategy_id"] == sid and liq(r)]
-    rets = [r["ret_since_entry"] for r in recs if r.get("ret_since_entry") is not None and not r.get("entry_censored")]
-    head = f"<b>{html.escape(name)}</b> — đang đạt <b>{len(recs)}</b> mã (GTGD20 ≥ {min_liq:.0f} tỷ)"
-    if rets:
-        pos = 100 * sum(1 for x in rets if x > 0) / len(rets)
-        head += f" · đang lãi {pos:.0f}% từ khi vào"
-    out = [head]
-    out.append(f"🟢 Mới vào ({len(new)})" + ("\n" + "\n".join(
-        f"• <b>{html.escape(r['ticker'])}</b> {html.escape(r.get('state') or '')} — điểm {_fmt_int(r.get('strategy_score'))}"
-        f" · giá vào {_fmt_px(r.get('close'))}" + (" (quay lại)" if r["signal_status"] == "RETURNING" else "")
-        for r in new) if new else ": không có"))
-    cur = sorted(recs, key=lambda r: (r.get("episode_start") or "", r["ticker"]), reverse=True)
-    if cur:
-        show = cur[:15]
-        out.append("📋 Đang đạt (ngày vào · giá vào → hiện tại · từ khi vào / VNI)\n" + "\n".join(
-            f"• <b>{html.escape(r['ticker'])}</b> {'≤ ' if r.get('entry_censored') else ''}{_d(r.get('episode_start'))}"
-            f" · {_fmt_px(r.get('entry_price'))} → {_fmt_px(r.get('close'))} · <b>{_fmt_pct(r.get('ret_since_entry'))}</b>"
-            f" / {_fmt_pct(r.get('vni_since_entry'))}" for r in show)
-            + (f"\n… và {len(cur) - len(show)} mã khác (xem Daily Exploration)" if len(cur) > len(show) else ""))
-    out.append(f"🔴 Không còn đạt ({len(drop)})" + ("\n" + "\n".join(
-        f"• <b>{html.escape(r['ticker'])}</b> — vào {'≤ ' if r.get('entry_censored') else ''}{_d(r.get('episode_start'))} giá {_fmt_px(r.get('entry_price'))}"
-        f" → {_fmt_px(r.get('last_price'))} ({_fmt_pct(r.get('ret_pct'))}, VNI {_fmt_pct(r.get('vni_ret_pct'))}), {r.get('streak') or '—'} phiên"
-        for r in drop) if drop else ": không có"))
-    return out
+    new = sorted((r for r in sess["records"] if r["strategy_id"] == sid and liq(r) and r["signal_status"] in ("NEW", "RETURNING")),
+                 key=lambda r: r["ticker"])
+    drop = sorted((r for r in sess.get("dropped", []) if r["strategy_id"] == sid and liq(r)), key=lambda r: r["ticker"])
+    return [f"<b>{html.escape(short)}</b>  🟢 {_tickers(new)}  🔴 {_tickers(drop)}"]
 
 
 def _chunks(text: str, limit: int = 3900) -> list[str]:
@@ -186,11 +156,11 @@ def eod_report(cfg: Config, doc: dict, tg: Telegram | None = None, dry_run: bool
     ncfg = cfg.settings.get("notify", {})
     sess = read_json(cfg.data_dir / "sessions" / f"{day}.json", {}) or {}
     names = {s.id: s.name_vi for s in cfg.strategies}
-    parts = [f"<b>Kết quả lọc phiên {_d(day)}</b> (chốt cuối ngày)", ""]
+    parts = [f"<b>Kết quả lọc {_d(day)}</b>  (🟢 vào · 🔴 ra)"]
     parts += _toprs_section(doc)
     for sid in ncfg.get("strategies", ["VCP", "WYCKOFF"]):
-        parts += [""] + _strategy_section(sid, names.get(sid, sid), sess, float(ncfg.get("min_liquidity_bil", 2.0)))
-    parts += ["", f'<a href="{SITE}#/top-rs">Top RS</a> · <a href="{SITE}#/exploration">Daily Exploration</a>']
+        parts += _strategy_section(sid, names.get(sid, sid), sess, float(ncfg.get("min_liquidity_bil", 2.0)))
+    parts += [f'<a href="{SITE}#/top-rs">Chi tiết trên dashboard</a>']
     text = "\n".join(parts)
     if dry_run:
         return text
