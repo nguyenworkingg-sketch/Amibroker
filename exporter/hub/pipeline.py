@@ -215,7 +215,7 @@ def run_amibroker(cfg: Config, market, *, strategy_ids: list[str] | None = None,
                   allow_empty: bool = False, with_sectors: bool = True, check_conflicts: bool = True,
                   catchup: bool = False) -> dict:
     """catchup=True: chay bu phien EOD khi AmiBroker DA co nen trong phien hom nay (vd 15:15 sau khi bo cap nhat
-    DNSE dung, lich 18:00 hom truoc bi lo): chi chay chien luoc tinh theo phien (supports_backfill) cho dung phien EOD,
+    DNSE dung, lich chot 16:00 hom truoc bi lo): chi chay chien luoc tinh theo phien (supports_backfill) cho dung phien EOD,
     ghi nguon 'backfill'; RS / High Beta (chi tinh phien cuoi) bi bo qua co ghi ro."""
     kind = "backfill" if backfill else ("catchup" if catchup else "daily")
     rr = RunRecorder(cfg, kind)

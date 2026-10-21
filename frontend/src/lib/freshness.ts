@@ -18,8 +18,8 @@ function weekday(iso: string): number {
 }
 
 /** Phien gan nhat DA HOAN TAT ma du lieu nen co (chua tru nghi le).
- *  Ket qua EOD cua phien hom nay chi ky vong sau gio chot du lieu (mac dinh 18:30, sau lich cap nhat 18:00). */
-export function expectedSession(now: Date = new Date(), readyMinutes = 18 * 60 + 30): string {
+ *  Ket qua EOD cua phien hom nay chi ky vong sau gio chot du lieu (mac dinh 17:30: lich chot 16:00 + toi da 4 lan thu lai). */
+export function expectedSession(now: Date = new Date(), readyMinutes = 17 * 60 + 30): string {
   const v = vnNow(now)
   let d = v.date
   if (!(v.weekday >= 1 && v.weekday <= 5 && v.minutes >= readyMinutes)) d = addDays(d, -1)
