@@ -1,0 +1,1 @@
+{"ticker":"BGE","name":"BCG ENERGY","exchange":"UPCoM","sector":null,"timeline":[{"date":"2026-07-24","s":{"RSZ":[0.155,78,"NEW","Từ Cải thiện"]}}],"rs":[["2026-07-24",31.4]],"close":[["2026-07-24",3.0]],"episodes":[{"strategy_id":"RSZ","start":"2026-07-24","status":"NEW","score":0.155,"origin":"backfill","forward":{"5":null,"10":null,"20":null,"40":null,"60":null}}]}

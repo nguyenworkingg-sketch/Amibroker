@@ -1,6 +1,90 @@
 {
   "runs": [
     {
+      "run_id": "d5f0d5075001",
+      "kind": "backfill",
+      "started_at": "2026-10-22T09:31:42+07:00",
+      "finished_at": "2026-10-22T09:33:09+07:00",
+      "session": "2026-10-21",
+      "result": "success",
+      "message": "1 chien luoc ok, 0 loi",
+      "steps": [
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "database D:\\AmiBroker_VN\\Data, nen cuoi 2026-10-22"
+        },
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "AmiBroker co nen 2026-10-22 sau phien EOD 2026-10-21: chi tai tao den 2026-10-21"
+        },
+        {
+          "name": "prices",
+          "status": "ok",
+          "message": "615 phien x 1482 ma tu AmiBroker (15.8s)"
+        },
+        {
+          "name": "RSZ",
+          "status": "created",
+          "strategy": "RSZ",
+          "session": "2025-10-20..2026-10-21",
+          "records": 19174,
+          "seconds": 25.9,
+          "message": "created: 227, unchanged: 23"
+        },
+        {
+          "name": "build",
+          "status": "ok",
+          "message": "253 phien, 643 file thay doi"
+        }
+      ],
+      "published": false,
+      "published_at": null
+    },
+    {
+      "run_id": "4bf2aef05ef5",
+      "kind": "backfill",
+      "started_at": "2026-10-22T09:30:18+07:00",
+      "finished_at": "2026-10-22T09:31:28+07:00",
+      "session": "2026-10-21",
+      "result": "success",
+      "message": "1 chien luoc ok, 0 loi",
+      "steps": [
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "database D:\\AmiBroker_VN\\Data, nen cuoi 2026-10-22"
+        },
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "AmiBroker co nen 2026-10-22 sau phien EOD 2026-10-21: chi tai tao den 2026-10-21"
+        },
+        {
+          "name": "prices",
+          "status": "ok",
+          "message": "615 phien x 1482 ma tu AmiBroker (15.7s)"
+        },
+        {
+          "name": "RSZ",
+          "status": "created",
+          "strategy": "RSZ",
+          "session": "2026-09-21..2026-10-21",
+          "records": 2178,
+          "seconds": 24.3,
+          "message": "created: 23"
+        },
+        {
+          "name": "build",
+          "status": "ok",
+          "message": "253 phien, 471 file thay doi"
+        }
+      ],
+      "published": false,
+      "published_at": null
+    },
+    {
       "run_id": "bc4c86df0bb0",
       "kind": "daily",
       "started_at": "2026-10-22T09:03:40+07:00",
@@ -823,25 +907,34 @@
       "last_success_at": "2026-10-22T09:12:53+07:00",
       "last_records": 6,
       "last_error": null
+    },
+    "RSZ": {
+      "last_status": "created",
+      "last_run_at": "2026-10-22T09:33:09+07:00",
+      "last_message": "created: 227, unchanged: 23",
+      "last_success_session": "2025-10-20..2026-10-21",
+      "last_success_at": "2026-10-22T09:33:09+07:00",
+      "last_records": 19174,
+      "last_error": null
     }
   },
   "last_success": {
-    "run_id": "bc4c86df0bb0",
-    "at": "2026-10-22T09:12:53+07:00",
+    "run_id": "d5f0d5075001",
+    "at": "2026-10-22T09:33:09+07:00",
     "session": "2026-10-21",
-    "kind": "daily"
+    "kind": "backfill"
   },
   "last_run": {
-    "run_id": "bc4c86df0bb0",
-    "kind": "daily",
-    "started_at": "2026-10-22T09:03:40+07:00",
-    "finished_at": "2026-10-22T09:12:53+07:00",
+    "run_id": "d5f0d5075001",
+    "kind": "backfill",
+    "started_at": "2026-10-22T09:31:42+07:00",
+    "finished_at": "2026-10-22T09:33:09+07:00",
     "session": "2026-10-21",
     "result": "success",
-    "message": "6 chien luoc ok, 0 loi"
+    "message": "1 chien luoc ok, 0 loi"
   },
   "last_publication": {
-    "at": "2026-10-22T09:12:54+07:00",
+    "at": "2026-10-22T09:39:26+07:00",
     "session": "2026-10-21"
   }
 }
