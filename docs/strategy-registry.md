@@ -43,3 +43,5 @@ Không báo cáo một phương pháp là “đã kết nối” khi chưa chạ
 ## RS chung trên web
 
 Cột “RS” (0–100) trên mọi bảng **không** phải RS Rating của PTKT. Nó là phân vị lợi suất 63 phiên của mã trong toàn bộ cổ phiếu HOSE/HNX/UPCoM có đủ dữ liệu, do exporter tính từ file EOD, để mọi mã đều có cùng một thước đo.
+
+* **RSZ** — tín hiệu tự so với lịch sử của mã (z-score), độc lập với RS Rating. Backtest 01/2014–10/2026 (`D:\AmiBroker_VN\backtest\bt_rsz.py`, `ket_qua_rsz.txt`): so với mua ngẫu nhiên mã thanh khoản cùng cách mua + phí, mỗi kiểu vào (từ Suy yếu / từ Cải thiện) chỉ tốt hơn ở 1 trong 2 giai đoạn (2014–2021 / 2022–2026); các đặc điểm xu hướng (cách MA50/MA200, đỉnh 1 năm, ExRet-Z) đảo chiều giữa 2 giai đoạn. Dùng làm danh sách theo dõi, không dùng riêng để giao dịch.

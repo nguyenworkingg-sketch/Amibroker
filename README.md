@@ -34,6 +34,7 @@ Chi tiết: [docs/architecture.md](docs/architecture.md).
 | RS | Relative Strength | `Xep hang - Sieu song.afl` (rổ PTKT 108 mã) | RS Rating ≥ 80 | Không (chỉ phiên cuối) |
 | ROTATION | Sector Rotation | `PTKT_core.afl › PtktSector` | ngành mạnh hơn VNINDEX + mã mạnh hơn ngành và tăng tốc — **quy tắc mới của Hub, chưa backtest** | Có |
 | HIGH_BETA | High Beta | `HighBeta_Exploration.afl` | Composite ≥ 70 (chế độ “Elite + Strong”) | Không (chỉ phiên cuối) |
+| RSZ | RS-Z mạnh lên | `PTKT_core.afl › PtktCompute` (chart "2. RS-Z và RS-Mom") | vào góc Dẫn dắt (RS-Z > 0, RS-Mom > 0), GTGD20 ≥ 2 tỷ — **backtest 2014–2026: chưa có lợi thế ổn định** | Có |
 
 Trang **Top RS**: cổ phiếu trong nhóm RS cao nhất toàn thị trường (vào ≥ 90, rời < 80, rổ GTGD20 ≥ 2 tỷ), kèm ngày vào top, giá vào và lợi suất so với VN-Index — xem [docs/data-contract.md](docs/data-contract.md#top-rs-toprslatestjson).
 

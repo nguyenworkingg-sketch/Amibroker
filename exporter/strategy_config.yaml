@@ -48,7 +48,7 @@ settings:
     telegram_config: D:\AmiBroker_VN\config\telegram.ini
     import_dir_live: D:\AmiBroker_VN\import
     # TIN CUOI NGAY (1 lan / phien): Top RS + cac phuong phap nay (ma moi vao / khong con dat, gia vao, % tu khi vao)
-    strategies: [VCP, WYCKOFF]
+    strategies: [VCP, WYCKOFF, RSZ]
     min_liquidity_bil: 2.0
   publish:
     remote: origin
@@ -229,6 +229,28 @@ strategies:
       - {col: Upside Capture, key: upside_capture, label: Upside capture, unit: lần}
       - {col: Entry Status, key: entry_status, label: Trạng thái điểm vào, unit: text}
       - {col: Market Regime, key: regime, label: Thị trường, unit: text}
+
+  - id: RSZ
+    name_vi: RS-Z mạnh lên
+    description: Cổ phiếu vừa vào góc "Dẫn dắt" của chart RS-Z / RS-Mom (sức mạnh so với VN-Index cao hơn thường lệ của chính mã và đang tăng tốc). Tự so với lịch sử của mã, độc lập với RS Rating. Đứng riêng chưa có lợi thế đã kiểm chứng — xem backtest.
+    enabled: true
+    version: "1.0"
+    afl: Hub_RSZ.afl
+    source_afl: [Formulas\Explore\RS-Z Manh len.afl, Formulas\Include\PTKT_core.afl]
+    apx: null
+    apply_to: all
+    two_pass: false
+    supports_backfill: true
+    columns: {ticker: Ticker, date: DateNum, state_code: StateCode, state: State, score: Score}
+    pass_rule: null
+    score_name: RS-Z (z-score so với chính mã)
+    scoring: RS-Z = z-score 63 phiên của (Giá/VN-Index)/MA21, làm mượt EMA3. Hạng = RS-Z giảm dần trong danh sách đạt.
+    state_labels: {2: Từ Suy yếu, 3: Từ Tụt hậu, 4: Từ Cải thiện}
+    metrics:
+      - {col: RSMom, key: rs_mom, label: RS-Mom, unit: z}
+      - {col: ExRetZ, key: exret_z, label: ExRet-Z, unit: z}
+      - {col: RSZChange5, key: rsz_change5, label: RS-Z đổi 5 phiên, unit: z}
+      - {col: SessionsInQuadrant, key: sessions_in_quadrant, label: Số phiên ở Dẫn dắt, unit: phiên}
 
 # Exploration phu tro (khong phai chien luoc chon co phieu): bang nganh cho trang Sector Rotation
 auxiliary:
