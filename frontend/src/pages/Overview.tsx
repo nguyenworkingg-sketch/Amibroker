@@ -7,7 +7,7 @@ import { buildMulti } from '../lib/ranking'
 import { href } from '../lib/router'
 
 export const STRAT_COLORS: Record<string, string> = {
-  VCP: '#34c38f', WYCKOFF: '#6aa2ff', PULLBACK: '#f2b84b', RS: '#c58af9', ROTATION: '#4dd0e1', HIGH_BETA: '#f0625a',
+  VCP: '#34c38f', WYCKOFF: '#6aa2ff', PULLBACK: '#f2b84b', RS: '#c58af9', ROTATION: '#4dd0e1', HIGH_BETA: '#f0625a', RSZ: '#ff8fb1',
 }
 
 export default function Overview({ meta, status }: PageProps) {

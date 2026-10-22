@@ -1,0 +1,33 @@
+// =====================================================================
+// Hub_RSZ.afl - RS-Z MANH LEN cho AmiBroker Exploration Hub
+// Logic: Formulas\Include\PTKT_core.afl > PtktCompute (PT_rsz, PT_rsm, PT_exret) - giong
+//   Explore\"RS-Z Manh len.afl" va chart PTKT\"2. RS-Z va RS-Mom.afl". Doc lap voi RS Rating.
+// Quy tac "dat" cua Hub: goc DAN DAT (RS-Z > 0 va RS-Mom > 0), GTGD TB20 >= 2 ty, san HOSE/HNX/UPCoM.
+//   -> trang thai Hub: MOI = vua vao Dan dat, KHONG CON DAT = roi Dan dat.
+// State = goc truoc khi vao Dan dat (Tu Cai thien / Tu Suy yeu ...). Diem = RS-Z.
+// Mang theo tung phien (khong LastValue) -> chay Range From-To de tai tao lich su (khong nhin truoc).
+// =====================================================================
+#include_once <PTKT_core.afl>
+PtktCompute();
+z = PT_rsz;
+m = PT_rsm;
+okZ = NOT IsNull(z) AND NOT IsNull(m);
+q = IIf(NOT okZ, 0, IIf(z > 0 AND m > 0, 1, IIf(z > 0, 2, IIf(m <= 0, 3, 4))));
+chg = q != Ref(q, -1);
+inQ = BarsSince(chg) + 1;
+inQ = IIf(IsNull(inQ), BarIndex() + 1, inQ);
+prevQ = ValueWhen(chg, Ref(q, -1));
+mk = MarketID();
+Filter = q == 1 AND Nz(PT_value20) >= 2 AND mk <= 2;
+
+SetOption("NoDefaultColumns", True);
+AddTextColumn(Name(), "Ticker", 1.0);
+AddColumn(DateNum(), "DateNum", 1.0);
+AddColumn(prevQ, "StateCode", 1.0);
+AddMultiTextColumn(prevQ, "-\nDan dat\nTu Suy yeu\nTu Tut hau\nTu Cai thien", "State");
+AddColumn(z, "Score", 1.3);
+AddColumn(m, "RSMom", 1.3);
+AddColumn(PT_exret, "ExRetZ", 1.3);
+AddColumn(z - Ref(z, -5), "RSZChange5", 1.3);
+AddColumn(inQ, "SessionsInQuadrant", 1.0);
+AddColumn(PT_value20, "Val20", 1.2);

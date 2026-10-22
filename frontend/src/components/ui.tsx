@@ -49,7 +49,7 @@ export function StrategyChip({ id, short = true }: { id: string; short?: boolean
 }
 
 export const SHORT: Record<string, string> = {
-  VCP: 'VCP', WYCKOFF: 'Wyckoff', PULLBACK: 'Pullback', RS: 'RS', ROTATION: 'Rotation', HIGH_BETA: 'High Beta',
+  VCP: 'VCP', WYCKOFF: 'Wyckoff', PULLBACK: 'Pullback', RS: 'RS', ROTATION: 'Rotation', HIGH_BETA: 'High Beta', RSZ: 'RS-Z'
 }
 
 export function TickerLink({ t }: { t: string }) {
