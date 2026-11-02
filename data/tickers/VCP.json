@@ -1,0 +1,1 @@
+{"ticker":"VCP","name":"VCP Power & Cons","exchange":"UPCoM","sector":null,"timeline":[{"date":"2026-11-02","s":{"RSZ":[3.667,1,"NEW","Từ Tụt hậu"]}}],"rs":[["2026-11-02",96.5]],"close":[["2026-11-02",27.6]],"episodes":[{"strategy_id":"RSZ","start":"2026-11-02","status":"NEW","score":3.667,"origin":"live","forward":{"5":null,"10":null,"20":null,"40":null,"60":null}}]}
