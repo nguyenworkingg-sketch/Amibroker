@@ -1,0 +1,1 @@
+{"ticker":"HPA","name":"Hoa Phat Agriculture","exchange":"HOSE","sector":null,"timeline":[{"date":"2026-11-09","s":{"RSZ":[1.035,35,"NEW","Từ Suy yếu"]}}],"rs":[["2026-11-09",21.8]],"close":[["2026-11-09",27.55]],"episodes":[{"strategy_id":"RSZ","start":"2026-11-09","status":"NEW","score":1.035,"origin":"live","forward":{"5":null,"10":null,"20":null,"40":null,"60":null}}]}
