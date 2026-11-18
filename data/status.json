@@ -1,6 +1,102 @@
 {
   "runs": [
     {
+      "run_id": "9b94d5b14351",
+      "kind": "catchup",
+      "started_at": "2026-11-18T15:15:05+07:00",
+      "finished_at": "2026-11-18T15:25:12+07:00",
+      "session": "2026-11-17",
+      "result": "success",
+      "message": "7 chien luoc ok, 0 loi",
+      "steps": [
+        {
+          "name": "probe",
+          "status": "ok",
+          "message": "database D:\\AmiBroker_VN\\Data, nen cuoi 2026-11-17"
+        },
+        {
+          "name": "prices",
+          "status": "ok",
+          "message": "615 phien x 1486 ma tu AmiBroker (27.5s)"
+        },
+        {
+          "name": "VCP",
+          "status": "created",
+          "strategy": "VCP",
+          "session": "2026-11-17",
+          "records": 7,
+          "seconds": 85.2,
+          "message": "created: 1"
+        },
+        {
+          "name": "WYCKOFF",
+          "status": "created",
+          "strategy": "WYCKOFF",
+          "session": "2026-11-17",
+          "records": 99,
+          "seconds": 59.9,
+          "message": "created: 1"
+        },
+        {
+          "name": "PULLBACK",
+          "status": "created",
+          "strategy": "PULLBACK",
+          "session": "2026-11-17",
+          "records": 4,
+          "seconds": 101.7,
+          "message": "created: 1"
+        },
+        {
+          "name": "RS",
+          "status": "created",
+          "strategy": "RS",
+          "session": "2026-11-17",
+          "records": 22,
+          "seconds": 101.1,
+          "message": "created: 1"
+        },
+        {
+          "name": "ROTATION",
+          "status": "created",
+          "strategy": "ROTATION",
+          "session": "2026-11-17",
+          "records": 9,
+          "seconds": 11.1,
+          "message": "created: 1"
+        },
+        {
+          "name": "HIGH_BETA",
+          "status": "created",
+          "strategy": "HIGH_BETA",
+          "session": "2026-11-17",
+          "records": 16,
+          "seconds": 117.4,
+          "message": "created: 1"
+        },
+        {
+          "name": "RSZ",
+          "status": "created",
+          "strategy": "RSZ",
+          "session": "2026-11-17",
+          "records": 30,
+          "seconds": 27.0,
+          "message": "created: 1"
+        },
+        {
+          "name": "_SECTORS",
+          "status": "ok",
+          "message": "1 phien nganh"
+        },
+        {
+          "name": "build",
+          "status": "ok",
+          "message": "270 phien, 167 file thay doi"
+        }
+      ],
+      "published": false,
+      "published_at": null
+    },
+    {
       "run_id": "6c056271abb0",
       "kind": "catchup",
       "started_at": "2026-11-17T15:15:04+07:00",
@@ -2656,85 +2752,85 @@
   "strategies": {
     "VCP": {
       "last_status": "created",
-      "last_run_at": "2026-11-17T15:24:46+07:00",
+      "last_run_at": "2026-11-18T15:25:12+07:00",
       "last_message": "created: 1",
-      "last_success_session": "2026-11-16",
-      "last_success_at": "2026-11-17T15:24:46+07:00",
-      "last_records": 10,
+      "last_success_session": "2026-11-17",
+      "last_success_at": "2026-11-18T15:25:12+07:00",
+      "last_records": 7,
       "last_error": null
     },
     "WYCKOFF": {
       "last_status": "created",
-      "last_run_at": "2026-11-17T15:24:46+07:00",
+      "last_run_at": "2026-11-18T15:25:12+07:00",
       "last_message": "created: 1",
-      "last_success_session": "2026-11-16",
-      "last_success_at": "2026-11-17T15:24:46+07:00",
-      "last_records": 105,
+      "last_success_session": "2026-11-17",
+      "last_success_at": "2026-11-18T15:25:12+07:00",
+      "last_records": 99,
       "last_error": null
     },
     "PULLBACK": {
       "last_status": "created",
-      "last_run_at": "2026-11-17T15:24:46+07:00",
+      "last_run_at": "2026-11-18T15:25:12+07:00",
       "last_message": "created: 1",
-      "last_success_session": "2026-11-16",
-      "last_success_at": "2026-11-17T15:24:46+07:00",
-      "last_records": 3,
+      "last_success_session": "2026-11-17",
+      "last_success_at": "2026-11-18T15:25:12+07:00",
+      "last_records": 4,
       "last_error": null
     },
     "ROTATION": {
       "last_status": "created",
-      "last_run_at": "2026-11-17T15:24:46+07:00",
+      "last_run_at": "2026-11-18T15:25:12+07:00",
       "last_message": "created: 1",
-      "last_success_session": "2026-11-16",
-      "last_success_at": "2026-11-17T15:24:46+07:00",
-      "last_records": 11,
+      "last_success_session": "2026-11-17",
+      "last_success_at": "2026-11-18T15:25:12+07:00",
+      "last_records": 9,
       "last_error": null
     },
     "RS": {
       "last_status": "created",
-      "last_run_at": "2026-11-17T15:24:46+07:00",
+      "last_run_at": "2026-11-18T15:25:12+07:00",
       "last_message": "created: 1",
-      "last_success_session": "2026-11-16",
-      "last_success_at": "2026-11-17T15:24:46+07:00",
+      "last_success_session": "2026-11-17",
+      "last_success_at": "2026-11-18T15:25:12+07:00",
       "last_records": 22,
       "last_error": null
     },
     "HIGH_BETA": {
       "last_status": "created",
-      "last_run_at": "2026-11-17T15:24:46+07:00",
-      "last_message": "created: 1; canh bao: 1 dong co so cot khac tieu de (dong dau: 201)",
-      "last_success_session": "2026-11-16",
-      "last_success_at": "2026-11-17T15:24:46+07:00",
-      "last_records": 19,
+      "last_run_at": "2026-11-18T15:25:12+07:00",
+      "last_message": "created: 1",
+      "last_success_session": "2026-11-17",
+      "last_success_at": "2026-11-18T15:25:12+07:00",
+      "last_records": 16,
       "last_error": null
     },
     "RSZ": {
       "last_status": "created",
-      "last_run_at": "2026-11-17T15:24:46+07:00",
+      "last_run_at": "2026-11-18T15:25:12+07:00",
       "last_message": "created: 1",
-      "last_success_session": "2026-11-16",
-      "last_success_at": "2026-11-17T15:24:46+07:00",
-      "last_records": 26,
+      "last_success_session": "2026-11-17",
+      "last_success_at": "2026-11-18T15:25:12+07:00",
+      "last_records": 30,
       "last_error": null
     }
   },
   "last_success": {
-    "run_id": "6c056271abb0",
-    "at": "2026-11-17T15:24:46+07:00",
-    "session": "2026-11-16",
+    "run_id": "9b94d5b14351",
+    "at": "2026-11-18T15:25:12+07:00",
+    "session": "2026-11-17",
     "kind": "catchup"
   },
   "last_run": {
-    "run_id": "6c056271abb0",
+    "run_id": "9b94d5b14351",
     "kind": "catchup",
-    "started_at": "2026-11-17T15:15:04+07:00",
-    "finished_at": "2026-11-17T15:24:46+07:00",
-    "session": "2026-11-16",
+    "started_at": "2026-11-18T15:15:05+07:00",
+    "finished_at": "2026-11-18T15:25:12+07:00",
+    "session": "2026-11-17",
     "result": "success",
     "message": "7 chien luoc ok, 0 loi"
   },
   "last_publication": {
-    "at": "2026-11-17T15:24:46+07:00",
-    "session": "2026-11-16"
+    "at": "2026-11-18T15:25:12+07:00",
+    "session": "2026-11-17"
   }
 }
