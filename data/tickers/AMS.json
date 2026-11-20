@@ -1,0 +1,1 @@
+{"ticker":"AMS","name":"AMECC JSC","exchange":"UPCoM","sector":null,"timeline":[{"date":"2026-11-19","s":{"HIGH_BETA":[74.7,4,"NEW",null]}}],"rs":[["2026-11-19",98.9]],"close":[["2026-11-19",9.6]],"episodes":[{"strategy_id":"HIGH_BETA","start":"2026-11-19","status":"NEW","score":74.7,"origin":"live","forward":{"5":null,"10":null,"20":null,"40":null,"60":null}}]}
